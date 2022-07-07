@@ -16,6 +16,9 @@ import os
 
 from django.utils.encoding import force_str
 
+from corsheaders.defaults import default_headers
+
+
 django.utils.encoding.force_text = force_str
 
 
@@ -50,6 +53,7 @@ SHARED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
     "django.contrib.messages",
+    "corsheaders",
     "django_tenants",
     "safedelete",
     "tenant",
@@ -90,6 +94,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 # https://docs.djangoproject.com/en/4.0/topics/http/middleware/
 
 MIDDLEWARE = [
+    "corsheaders.middleware.CorsMiddleware",
     "django_tenants.middleware.main.TenantMainMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -114,6 +119,28 @@ DATABASES = {
         "PORT": os.environ.get("SQL_PORT", "5432"),
     }
 }
+
+
+# CORS
+# https://pypi.org/project/django-cors-headers/
+
+CORS_URLS_REGEX = r"^/api/.*$"
+
+CORS_ALLOW_ALL_ORIGINS = False
+
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+]
+
+CORS_ALLOW_METHODS = [
+    "GET",
+    "OPTIONS",
+    "POST",
+]
+
+CORS_ALLOW_HEADERS = list(default_headers) + []
+
+CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 
 
 # Authentication
