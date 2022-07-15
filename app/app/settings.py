@@ -95,7 +95,7 @@ ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
-    "django_tenants.middleware.main.TenantMainMiddleware",
+    "tenant.middleware.XTenantMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
@@ -128,8 +128,8 @@ CORS_URLS_REGEX = r"^/api/.*$"
 
 CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ALLOWED_ORIGINS = [
-    "http://localhost:3000",
+CORS_ALLOWED_ORIGIN_REGEXES = [
+    r"^https?://(\w+\.)?localhost:3000$",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -138,9 +138,9 @@ CORS_ALLOW_METHODS = [
     "POST",
 ]
 
-CORS_ALLOW_HEADERS = list(default_headers) + []
-
-CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
+CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-Tenant",
+]
 
 
 # Authentication
