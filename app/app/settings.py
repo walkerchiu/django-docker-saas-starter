@@ -65,6 +65,7 @@ DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
 PUBLIC_SCHEMA_NAME = "public"
 
 TENANT_APPS = (
+    "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
     "account",
     "organization",
 )
@@ -165,7 +166,7 @@ GRAPHQL_JWT = {
     "JWT_EXPIRATION_DELTA": timedelta(
         minutes=int(os.environ["JWT_EXPIRATION_MINUTES"])
     ),
-    "JWT_LONG_RUNNING_REFRESH_TOKEN": False,
+    "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
     "JWT_PAYLOAD_HANDLER": "core.graphql_jwt.utils.jwt_payload",
     "JWT_REFRESH_EXPIRATION_DELTA": timedelta(
         days=int(os.environ["JWT_REFRESH_EXPIRATION_DAYS"])
