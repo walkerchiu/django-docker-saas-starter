@@ -171,6 +171,7 @@ GRAPHQL_JWT = {
     "JWT_REFRESH_EXPIRATION_DELTA": timedelta(
         days=int(os.environ["JWT_REFRESH_EXPIRATION_DAYS"])
     ),
+    "JWT_REUSE_REFRESH_TOKENS": True,
     "JWT_SECRET_KEY": SECRET_KEY,
     "JWT_VERIFY_EXPIRATION": True,
 }
