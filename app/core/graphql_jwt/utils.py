@@ -2,6 +2,7 @@ from calendar import timegm
 from datetime import datetime
 
 from django.contrib.auth import get_user_model
+from django.utils import timezone
 from django.utils.translation import gettext as _
 import django
 
@@ -15,7 +16,7 @@ def jwt_payload(user, context=None):
     jwt_datetime = datetime.utcnow() + jwt_settings.JWT_EXPIRATION_DELTA
     jwt_expires = int(jwt_datetime.timestamp())
 
-    user.last_login = datetime.utcnow()
+    user.last_login = timezone.now()
     user.save()
 
     payload = {}
