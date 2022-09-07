@@ -50,6 +50,12 @@ class TenantService:
         return result, tenant
 
     @transaction.atomic
+    def updateEmail(self, email_original: str, email_new: str) -> bool:
+        Tenant.all_objects.filter(email=email_original).update(email=email_new)
+
+        return True
+
+    @transaction.atomic
     def delete_tenant(self, tenant_id: uuid) -> bool:
         try:
             tenant = Tenant.objects.only("id").get(pk=tenant_id)
