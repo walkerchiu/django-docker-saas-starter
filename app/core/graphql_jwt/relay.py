@@ -1,10 +1,13 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
 from django.db import connection
+from django.dispatch import receiver
+from django.utils import timezone
 
 from django_tenants.utils import schema_context
 from graphene.utils.thenables import maybe_thenable
 from graphql_jwt.refresh_token.relay import DeleteRefreshTokenCookie, Revoke
+from graphql_jwt.signals import token_issued
 import graphene
 
 from core.graphql_jwt import mixins
@@ -105,3 +108,9 @@ class DeleteJSONWebTokenCookie(
     @classmethod
     def mutate_and_get_payload(cls, *args, **kwargs):
         return cls.delete_cookie(*args, **kwargs)
+
+
+@receiver(token_issued)
+def token_issued(sender, request, user, **kwargs):
+    user.last_login = timezone.now()
+    user.save()
