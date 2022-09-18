@@ -4,10 +4,11 @@ from graphene.types.generic import GenericScalar
 from graphene.utils.thenables import maybe_thenable
 from graphql_jwt import exceptions, signals
 from graphql_jwt.decorators import csrf_rotation, ensure_token, setup_jwt_cookie
-from graphql_jwt.refresh_token.mixins import RefreshTokenMixin
 from graphql_jwt.settings import jwt_settings
 from graphql_jwt.utils import get_payload, get_user_by_payload
 import graphene
+
+from core.graphql_jwt.refresh_token.mixins import RefreshTokenMixin
 
 
 class JSONWebTokenMixin:

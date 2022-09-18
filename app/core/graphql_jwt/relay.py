@@ -6,12 +6,12 @@ from django.utils import timezone
 
 from django_tenants.utils import schema_context
 from graphene.utils.thenables import maybe_thenable
-from graphql_jwt.refresh_token.relay import DeleteRefreshTokenCookie, Revoke
 from graphql_jwt.signals import token_issued
 import graphene
 
 from core.graphql_jwt import mixins
 from core.graphql_jwt.decorators import token_auth
+from core.graphql_jwt.refresh_token.relay import DeleteRefreshTokenCookie, Revoke
 from tenant.models import Tenant
 
 __all__ = [
