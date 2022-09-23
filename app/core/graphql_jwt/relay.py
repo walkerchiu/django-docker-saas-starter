@@ -6,7 +6,11 @@ from django.utils import timezone
 
 from django_tenants.utils import schema_context
 from graphene.utils.thenables import maybe_thenable
-from graphql_jwt.signals import token_issued
+from graphql_jwt.refresh_token.signals import (
+    refresh_token_rotated,
+    refresh_token_revoked,
+)
+from graphql_jwt.signals import token_issued, token_refreshed
 import graphene
 
 from core.graphql_jwt import mixins
@@ -110,7 +114,28 @@ class DeleteJSONWebTokenCookie(
         return cls.delete_cookie(*args, **kwargs)
 
 
+# https://django-graphql-jwt.domake.io/signals.html#token-issued
 @receiver(token_issued)
 def token_issued(sender, request, user, **kwargs):
     user.last_login = timezone.now()
     user.save()
+
+
+# https://django-graphql-jwt.domake.io/signals.html#token-refreshed
+@receiver(token_refreshed)
+def token_refreshed(sender, request, user, **kwargs):
+    pass
+
+
+# https://django-graphql-jwt.domake.io/signals.html#refresh-token-rotated
+@receiver(refresh_token_rotated)
+def refresh_token_rotated(
+    sender, request, refresh_token: str, refresh_token_issued: str = None, **kwargs
+):
+    pass
+
+
+# https://django-graphql-jwt.domake.io/signals.html#refresh-token-revoked
+@receiver(refresh_token_revoked)
+def refresh_token_revoked(sender, request, refresh_token: str, **kwargs):
+    pass
