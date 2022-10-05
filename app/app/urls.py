@@ -17,24 +17,23 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
-from graphene_django.views import GraphQLView
-
 from app.schemas.schema_auth import schema as schema_auth
 from app.schemas.schema_dashboard import schema as schema_dashboard
 from core.backend import DepthAnalysisBackend
+from core.views import ErrorGraphQLView
 
 
 # GraphQL
 urlpatterns = [
     path(
         "auth/graphql",
-        GraphQLView.as_view(
+        ErrorGraphQLView.as_view(
             graphiql=True, schema=schema_auth, backend=DepthAnalysisBackend()
         ),
     ),
     path(
         "dashboard/graphql",
-        GraphQLView.as_view(
+        ErrorGraphQLView.as_view(
             graphiql=True, schema=schema_dashboard, backend=DepthAnalysisBackend()
         ),
     ),

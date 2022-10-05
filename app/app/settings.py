@@ -152,10 +152,13 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 GRAPHENE = {
     "ATOMIC_MUTATIONS": True,
-    "SCHEMA": "django_root.schema.schema",
+    "CAMELCASE_ERRORS": False,
     "MIDDLEWARE": [
         "core.graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
+    "SCHEMA": "django_root.schema.schema",
+    "SCHEMA_INDENT": 2,
+    "SCHEMA_OUTPUT": "schema.json",
 }
 
 GRAPHENE_MAX_BREADTH = 1
