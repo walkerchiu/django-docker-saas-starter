@@ -6,6 +6,7 @@ from graphene_django.filter import DjangoFilterConnectionField
 import graphene
 
 from account.models import User
+from core.relay.connection import ExtendedConnection
 from tenant.models import Domain, Tenant
 
 
@@ -45,6 +46,7 @@ class UserNode(DjangoObjectType):
         )
         order_by_field = "email"
         interfaces = (graphene.relay.Node,)
+        connection_class = ExtendedConnection
 
     tenants = graphene.List(TenantsType)
 

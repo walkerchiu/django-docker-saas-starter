@@ -156,6 +156,11 @@ GRAPHENE = {
     "MIDDLEWARE": [
         "core.graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],
+    # Set to True if the connection fields must have
+    # either the first or last argument
+    "RELAY_CONNECTION_ENFORCE_FIRST_OR_LAST": False,
+    # Max items returned in ConnectionFields / FilterConnectionFields
+    "RELAY_CONNECTION_MAX_LIMIT": 100,
     "SCHEMA": "django_root.schema.schema",
     "SCHEMA_INDENT": 2,
     "SCHEMA_OUTPUT": "schema.json",
