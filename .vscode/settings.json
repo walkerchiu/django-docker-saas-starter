@@ -1,0 +1,19 @@
+{
+    "editor.defaultFormatter": null,
+    "editor.formatOnSave": true,
+    "[json]": {
+        "editor.quickSuggestions": {
+            "strings": true
+        },
+        "editor.suggest.insertMode": "replace",
+        "editor.defaultFormatter": "esbenp.prettier-vscode"
+    },
+    "[yaml]": {
+        "editor.insertSpaces": true,
+        "editor.tabSize": 2,
+        "editor.autoIndent": "advanced"
+    },
+    "prettier.tabWidth": 4,
+    "python.defaultInterpreterPath": "./venv/bin/python3",
+    "python.formatting.provider": "black"
+}
