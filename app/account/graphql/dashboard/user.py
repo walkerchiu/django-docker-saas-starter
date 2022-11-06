@@ -3,6 +3,7 @@ from django.conf import settings
 from django_tenants.utils import schema_context
 from graphene_django import DjangoObjectType
 from graphene_django.filter import DjangoFilterConnectionField
+from graphql.execution.base import ResolveInfo
 import graphene
 
 from account.models import User
@@ -51,11 +52,11 @@ class UserNode(DjangoObjectType):
     tenants = graphene.List(TenantsType)
 
     @classmethod
-    def get_queryset(cls, queryset, info):
+    def get_queryset(cls, queryset, info: ResolveInfo):
         return queryset
 
     @classmethod
-    def get_node(cls, info, id):
+    def get_node(cls, info: ResolveInfo, id):
         try:
             user = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
@@ -67,7 +68,7 @@ class UserNode(DjangoObjectType):
         raise Exception("Bad Request!")
 
     @staticmethod
-    def resolve_tenants(root, info):
+    def resolve_tenants(root, info: ResolveInfo):
         with schema_context(settings.PUBLIC_SCHEMA_NAME):
             tenants = []
             email = info.context.user.email
