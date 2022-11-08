@@ -124,6 +124,33 @@ DATABASES = {
 }
 
 
+# Cache
+# https://docs.djangoproject.com/en/4.1/topics/cache/
+
+if APP_ENV in ["dev", "staging", "prod"]:
+    CACHES = {
+        "default": {
+            "BACKEND": "django_redis.cache.RedisCache",
+            "LOCATION": os.environ["AWS_CACHE_ENDPOINT"],
+            "OPTIONS": {
+                # ElastiCache: RedisCluster(Cluster mode: On)
+                # "REDIS_CLIENT_CLASS": "rediscluster.RedisCluster",
+                # "CONNECTION_POOL_CLASS": "rediscluster.connection.ClusterConnectionPool",
+                # "CONNECTION_POOL_KWARGS": {"skip_full_coverage_check": True},
+                # ElastiCache: RedisCluster(Cluster mode: Off)
+                "CLIENT_CLASS": "django_redis.client.DefaultClient",
+            },
+        }
+    }
+else:
+    CACHES = {
+        "default": {
+            "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
+            "LOCATION": "unique-snowflake",
+        }
+    }
+
+
 # CORS
 # https://pypi.org/project/django-cors-headers/
 
@@ -261,3 +288,8 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 # https://docs.djangoproject.com/en/4.0/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
+
+
+AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
+AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+AWS_QUERYSTRING_EXPIRE = os.environ["AWS_QUERYSTRING_EXPIRE"]
