@@ -290,6 +290,29 @@ STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
+# DATA_UPLOAD_MAX_MEMORY_SIZE
+# https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DATA_UPLOAD_MAX_MEMORY_SIZE
+
+DATA_UPLOAD_MAX_MEMORY_SIZE = 26214400
+
+# FILE_UPLOAD_MAX_MEMORY_SIZE
+# https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-FILE_UPLOAD_MAX_MEMORY_SIZE
+
+FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400
+
+
+# DEFAULT_FILE_STORAGE
+# https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DEFAULT_FILE_STORAGE
+
+if APP_ENV in ["dev", "staging", "prod"]:
+    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+else:
+    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+
+
 AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
 AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
+AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
+AWS_S3_REGION_NAME = os.environ["AWS_S3_REGION_NAME"]
+AWS_S3_SIGNATURE_VERSION = os.environ["AWS_S3_SIGNATURE_VERSION"]
 AWS_QUERYSTRING_EXPIRE = os.environ["AWS_QUERYSTRING_EXPIRE"]
