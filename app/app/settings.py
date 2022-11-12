@@ -11,6 +11,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 from datetime import timedelta
 from pathlib import Path
 import django
+import environ
 import os
 
 from django.utils.encoding import force_str
@@ -21,24 +22,35 @@ from corsheaders.defaults import default_headers
 django.utils.encoding.force_text = force_str
 
 
-APP_DOMAIN = os.environ.get("APP_DOMAIN")
-APP_ENV = os.environ.get("APP_ENV")
-APP_NAME = os.environ.get("APP_NAME")
-
+# set casting, default value
+env = environ.Env(
+    DEBUG=(bool, False),
+    PLAYGROUND=(bool, True),
+    JWT_EXPIRATION_MINUTES=(int, 60),
+    JWT_REFRESH_EXPIRATION_DAYS=(int, 7),
+    JWT_REVOKE_AND_REFRESH=(bool, True),
+)
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
 BASE_DIR = Path(__file__).resolve().parent.parent
+
+# Take environment variables from .env file
+environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
+
+APP_DOMAIN = env("APP_DOMAIN")
+APP_ENV = env("APP_ENV")
+APP_NAME = env("APP_NAME")
 
 
 # Quick-start development settings - unsuitable for production
 # See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
-SECRET_KEY = os.environ.get("SECRET_KEY")
+SECRET_KEY = env("SECRET_KEY")
 
 # SECURITY WARNING: don't enable the following settings in production!
-DEBUG = bool(os.environ.get("DEBUG"))
-PLAYGROUND = bool(os.environ.get("PLAYGROUND"))
+DEBUG = env("DEBUG")
+PLAYGROUND = env("PLAYGROUND")
 
 WSGI_APPLICATION = "app.wsgi.application"
 
@@ -89,7 +101,7 @@ APPEND_SLASH = False
 # ALLOWED_HOSTS
 # https://docs.djangoproject.com/en/4.1/ref/settings/#allowed-hosts
 
-ALLOWED_HOSTS = os.environ.get("ALLOWED_HOSTS").split(" ")
+ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 
 
 # Middleware
@@ -114,12 +126,12 @@ MIDDLEWARE = [
 
 DATABASES = {
     "default": {
-        "ENGINE": os.environ.get("SQL_ENGINE", "django.db.backends.sqlite3"),
-        "NAME": os.environ.get("SQL_DATABASE", os.path.join(BASE_DIR, "db.sqlite3")),
-        "USER": os.environ.get("SQL_USER"),
-        "PASSWORD": os.environ.get("SQL_PASSWORD"),
-        "HOST": os.environ.get("SQL_HOST", "localhost"),
-        "PORT": os.environ.get("SQL_PORT", "5432"),
+        "ENGINE": env("SQL_ENGINE"),
+        "NAME": env("SQL_DATABASE"),
+        "USER": env("SQL_USER"),
+        "PASSWORD": env("SQL_PASSWORD"),
+        "HOST": env("SQL_HOST"),
+        "PORT": env("SQL_PORT"),
     }
 }
 
@@ -131,7 +143,7 @@ if APP_ENV in ["dev", "staging", "prod"]:
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
-            "LOCATION": os.environ["AWS_CACHE_ENDPOINT"],
+            "LOCATION": env("AWS_CACHE_ENDPOINT"),
             "OPTIONS": {
                 # ElastiCache: RedisCluster(Cluster mode: On)
                 # "REDIS_CLIENT_CLASS": "rediscluster.RedisCluster",
@@ -314,9 +326,9 @@ else:
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 
-AWS_ACCESS_KEY_ID = os.environ["AWS_ACCESS_KEY_ID"]
-AWS_SECRET_ACCESS_KEY = os.environ["AWS_SECRET_ACCESS_KEY"]
-AWS_STORAGE_BUCKET_NAME = os.environ["AWS_STORAGE_BUCKET_NAME"]
-AWS_S3_REGION_NAME = os.environ["AWS_S3_REGION_NAME"]
-AWS_S3_SIGNATURE_VERSION = os.environ["AWS_S3_SIGNATURE_VERSION"]
-AWS_QUERYSTRING_EXPIRE = os.environ["AWS_QUERYSTRING_EXPIRE"]
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
+AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
+AWS_S3_SIGNATURE_VERSION = env("AWS_S3_SIGNATURE_VERSION")
+AWS_QUERYSTRING_EXPIRE = env("AWS_QUERYSTRING_EXPIRE")
