@@ -1,3 +1,4 @@
+from django.conf import settings
 from django.contrib.auth import authenticate
 from django.contrib.auth.middleware import get_user
 from django.contrib.auth.models import AnonymousUser
@@ -78,5 +79,11 @@ class JSONWebTokenMiddleware:
 
                 if jwt_settings.JWT_ALLOW_ARGUMENT:
                     self.cached_authentication.insert(info.path, user)
+
+        if not settings.PLAYGROUND:
+            endpoint = info.context.path.split("/")[1]
+            if endpoint in ("dashboard"):
+                if user is None:
+                    raise Exception("The token is invalid!")
 
         return next(root, info, **kwargs)

@@ -1,5 +1,6 @@
 from typing import Type
 
+from django.conf import settings
 from django.db import connection
 from django.http.request import HttpRequest
 
@@ -28,9 +29,12 @@ class XTenantMiddleware(TenantMainMiddleware):
     def get_tenant(
         self, tenant_model: Type[Tenant], request: HttpRequest
     ) -> Type[Tenant]:
-        if domain := request.headers.get("X-Tenant"):
-            return tenant_model.objects.get(domains__domain=domain)
+        if settings.PLAYGROUND:
+            return tenant_model.objects.first()
         else:
-            return tenant_model.objects.get(
-                domains__domain=self.hostname_from_request(request)
-            )
+            if domain := request.headers.get("X-Tenant"):
+                return tenant_model.objects.get(domains__domain=domain)
+            else:
+                return tenant_model.objects.get(
+                    domains__domain=self.hostname_from_request(request)
+                )

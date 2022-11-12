@@ -28,13 +28,17 @@ urlpatterns = [
     path(
         "auth/graphql",
         ErrorGraphQLView.as_view(
-            graphiql=True, schema=schema_auth, backend=DepthAnalysisBackend()
+            graphiql=settings.PLAYGROUND,
+            schema=schema_auth,
+            backend=DepthAnalysisBackend(),
         ),
     ),
     path(
         "dashboard/graphql",
         ErrorGraphQLView.as_view(
-            graphiql=True, schema=schema_dashboard, backend=DepthAnalysisBackend()
+            graphiql=settings.PLAYGROUND,
+            schema=schema_dashboard,
+            backend=DepthAnalysisBackend(),
         ),
     ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)

@@ -1,12 +1,15 @@
 import re
 
+from django.conf import settings
+
 from graphene_django.views import GraphQLView
 
 
 class ErrorGraphQLView(GraphQLView):
     def execute_graphql_request(self, *args, **kwargs):
         result = super().execute_graphql_request(*args, **kwargs)
-        if result.errors:
+
+        if not settings.PLAYGROUND and result.errors:
             for error in result.errors:
                 try:
                     raise error.original_error

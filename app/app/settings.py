@@ -36,8 +36,9 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.environ.get("SECRET_KEY")
 
-# SECURITY WARNING: don't run with debug turned on in production!
-DEBUG = os.environ.get("DEBUG")
+# SECURITY WARNING: don't enable the following settings in production!
+DEBUG = bool(os.environ.get("DEBUG"))
+PLAYGROUND = bool(os.environ.get("PLAYGROUND"))
 
 WSGI_APPLICATION = "app.wsgi.application"
 
@@ -54,6 +55,7 @@ SHARED_APPS = (
     "django.contrib.messages",
     "corsheaders",
     "django_tenants",
+    "graphene_django",
     "safedelete",
     "tenant",
 )
@@ -178,6 +180,10 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 GRAPHENE = {
     "ATOMIC_MUTATIONS": True,
     "CAMELCASE_ERRORS": False,
+    # By default GraphiQL headers editor tab is enabled, set to False to hide it
+    # This sets headerEditorEnabled GraphiQL option, for details go to
+    # https://github.com/graphql/graphiql/tree/main/packages/graphiql#options
+    "GRAPHIQL_HEADER_EDITOR_ENABLED": True,
     "MIDDLEWARE": [
         "core.graphql_jwt.middleware.JSONWebTokenMiddleware",
     ],

@@ -20,12 +20,15 @@ class HealthCheckMiddleware(MiddlewareMixin):
             request.path == "/" or request.path == "/healthz"
         ):
             return HttpResponse("200")
-        elif request.path.startswith("/auth/") and request.headers.get("Authorization"):
-            raise Exception("This operation is not allowed!")
-        elif request.path.startswith("/dashboard/") and not request.headers.get(
-            "Authorization"
-        ):
-            raise Exception("This operation is not allowed!")
+        elif not settings.PLAYGROUND:
+            if request.path.startswith("/auth/") and request.headers.get(
+                "Authorization"
+            ):
+                raise Exception("This operation is not allowed!")
+            elif request.path.startswith("/dashboard/") and not request.headers.get(
+                "Authorization"
+            ):
+                raise Exception("This operation is not allowed!")
 
         response = self.get_response(request)
 

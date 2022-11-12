@@ -25,4 +25,17 @@ class DepthAnalysisBackend(GraphQLCoreBackend):
             if depth > settings.GRAPHENE_MAX_DEPTH:
                 raise Exception("Query is too nested")
 
+        if not settings.PLAYGROUND:
+            ast = document.document_ast
+            for definition in ast.definitions:
+                if (
+                    len(definition.selection_set.selections)
+                    > settings.GRAPHENE_MAX_BREADTH
+                ):
+                    raise Exception("Query is too complex")
+
+                depth = measure_depth(definition.selection_set)
+                if depth > settings.GRAPHENE_MAX_DEPTH:
+                    raise Exception("Query is too nested")
+
         return document
