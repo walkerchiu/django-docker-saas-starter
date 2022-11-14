@@ -10,6 +10,7 @@ https://docs.djangoproject.com/en/4.1/ref/settings/
 
 from datetime import timedelta
 from pathlib import Path
+from ssm_parameter_store import EC2ParameterStore
 import django
 import environ
 import os
@@ -40,6 +41,22 @@ environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 APP_DOMAIN = env("APP_DOMAIN")
 APP_ENV = env("APP_ENV")
 APP_NAME = env("APP_NAME")
+
+
+AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
+AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
+
+
+# Get parameters and populate os.environ (region not required if AWS_DEFAULT_REGION environment variable set)
+parameter_store = EC2ParameterStore(
+    aws_access_key_id=AWS_ACCESS_KEY_ID,
+    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+    region_name=env("AWS_SSM_REGION_NAME"),
+)
+django_parameters = parameter_store.get_parameters_by_path(
+    "/" + APP_ENV + "/", strip_path=True, recursive=True
+)
+EC2ParameterStore.set_env(django_parameters)
 
 
 # Quick-start development settings - unsuitable for production
@@ -326,8 +343,6 @@ else:
     DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
 
 
-AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")
-AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
 AWS_S3_SIGNATURE_VERSION = env("AWS_S3_SIGNATURE_VERSION")
