@@ -85,6 +85,7 @@ SHARED_APPS = (
     "corsheaders",
     "django_tenants",
     "graphene_django",
+    "rest_framework",
     "safedelete",
     "tenant",
 )

@@ -19,12 +19,14 @@ from django.urls import path
 
 from app.schemas.schema_auth import schema as schema_auth
 from app.schemas.schema_dashboard import schema as schema_dashboard
+from app.views_api import version
 from core.backend import DepthAnalysisBackend
 from core.views import ErrorGraphQLView
 
 
 # GraphQL
 urlpatterns = [
+    path("api/version", version, name="version"),
     path(
         "auth/graphql",
         ErrorGraphQLView.as_view(

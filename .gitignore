@@ -101,3 +101,4 @@ docker-compose.local.yml
 
 app/db.sqlite3
 app/staticfiles
+version.ini
