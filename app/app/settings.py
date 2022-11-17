@@ -48,15 +48,16 @@ AWS_SECRET_ACCESS_KEY = env("AWS_SECRET_ACCESS_KEY")
 
 
 # Get parameters and populate os.environ (region not required if AWS_DEFAULT_REGION environment variable set)
-parameter_store = EC2ParameterStore(
-    aws_access_key_id=AWS_ACCESS_KEY_ID,
-    aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
-    region_name=env("AWS_SSM_REGION_NAME"),
-)
-django_parameters = parameter_store.get_parameters_by_path(
-    "/" + APP_ENV + "/", strip_path=True, recursive=True
-)
-EC2ParameterStore.set_env(django_parameters)
+if APP_ENV in ["dev", "staging", "prod"]:
+    parameter_store = EC2ParameterStore(
+        aws_access_key_id=AWS_ACCESS_KEY_ID,
+        aws_secret_access_key=AWS_SECRET_ACCESS_KEY,
+        region_name=env("AWS_SSM_REGION_NAME"),
+    )
+    django_parameters = parameter_store.get_parameters_by_path(
+        "/" + APP_ENV + "/", strip_path=True, recursive=True
+    )
+    EC2ParameterStore.set_env(django_parameters)
 
 
 # Quick-start development settings - unsuitable for production
