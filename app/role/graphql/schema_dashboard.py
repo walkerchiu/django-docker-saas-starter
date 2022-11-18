@@ -1,0 +1,23 @@
+import graphene
+
+from role.graphql.dashboard.permission import PermissionMutation, PermissionQuery
+from role.graphql.dashboard.role import RoleMutation, RoleQuery
+
+
+class Query(
+    PermissionQuery,
+    RoleQuery,
+    graphene.ObjectType,
+):
+    pass
+
+
+class Mutation(
+    PermissionMutation,
+    RoleMutation,
+    graphene.ObjectType,
+):
+    pass
+
+
+schema = graphene.Schema(mutation=Mutation, query=Query)

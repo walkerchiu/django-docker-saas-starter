@@ -4,9 +4,11 @@ import graphene
 
 from account.graphql.dashboard.user import UserNode
 from account.graphql.schema_dashboard import UserQuery
+from role.graphql.schema_dashboard import Mutation as RoleMutation, Query as RoleQuery
 
 
 class Query(
+    RoleQuery,
     UserQuery,
     graphene.ObjectType,
 ):
@@ -18,9 +20,10 @@ class Query(
 
 
 class Mutation(
+    RoleMutation,
     graphene.ObjectType,
 ):
     pass
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(mutation=Mutation, query=Query)

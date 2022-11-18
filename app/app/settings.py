@@ -99,6 +99,7 @@ TENANT_APPS = (
     "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
     "account",
     "organization",
+    "role",
 )
 
 TENANT_DOMAIN_MODEL = "tenant.Domain"
