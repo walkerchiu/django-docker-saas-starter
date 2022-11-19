@@ -7,6 +7,8 @@ from django.db import models
 from safedelete.models import SafeDeleteModel, SOFT_DELETE_CASCADE
 
 from core.models import CreateUpdateDateAndSafeDeleteMixin
+from role import ProtectedRole
+from role.models import Role
 
 
 class UserManager(BaseUserManager):
@@ -20,6 +22,7 @@ class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
     )
     name = models.CharField(max_length=255, db_index=True)
     email_verified = models.BooleanField(default=False)
+    roles = models.ManyToManyField(Role)
 
     objects = UserManager()
 
@@ -33,6 +36,38 @@ class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
 
     def __str__(self):
         return str(self.id)
+
+    @property
+    def is_admin(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Admin).exists()
+
+    @property
+    def is_collaborator(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Collaborator).exists()
+
+    @property
+    def is_customer(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Customer).exists()
+
+    @property
+    def is_manager(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Manager).exists()
+
+    @property
+    def is_member(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Member).exists()
+
+    @property
+    def is_owner(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Owner).exists()
+
+    @property
+    def is_partner(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Partner).exists()
+
+    @property
+    def is_staff(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.Staff).exists()
 
 
 class Profile(SafeDeleteModel):
