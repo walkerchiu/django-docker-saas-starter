@@ -5,10 +5,12 @@ import graphene
 from account.graphql.dashboard.user import UserNode
 from account.graphql.schema_dashboard import UserQuery
 from role.graphql.schema_dashboard import Mutation as RoleMutation, Query as RoleQuery
+from tenant.graphql.schema_dashboard import Query as TenantQuery
 
 
 class Query(
     RoleQuery,
+    TenantQuery,
     UserQuery,
     graphene.ObjectType,
 ):
