@@ -69,7 +69,7 @@ class UserNode(DjangoObjectType):
         raise Exception("Bad Request!")
 
     @staticmethod
-    def resolve_tenants(root, info: ResolveInfo):
+    def resolve_tenants(root: User, info: ResolveInfo):
         with schema_context(settings.PUBLIC_SCHEMA_NAME):
             tenants = []
             email = info.context.user.email
