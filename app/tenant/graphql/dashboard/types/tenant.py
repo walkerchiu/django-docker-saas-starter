@@ -4,11 +4,13 @@ from django_filters import (
     FilterSet,
     OrderingFilter,
 )
-from graphene_django import DjangoObjectType
+from graphene_django import DjangoConnectionField, DjangoObjectType
 from graphql.execution.base import ResolveInfo
 import graphene
 
 from core.relay.connection import ExtendedConnection
+from tenant.graphql.dashboard.types.contract import ContractNode
+from tenant.graphql.dashboard.types.domain import DomainNode
 from tenant.models import Tenant
 
 
@@ -61,6 +63,13 @@ class TenantNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
         connection_class = ExtendedConnection
 
+    contract_set = DjangoConnectionField(
+        ContractNode, orderBy=graphene.List(of_type=graphene.String)
+    )
+    domain_set = DjangoConnectionField(
+        DomainNode, orderBy=graphene.List(of_type=graphene.String)
+    )
+
     @classmethod
     def get_queryset(cls, queryset, info: ResolveInfo):
         return queryset
@@ -73,3 +82,11 @@ class TenantNode(DjangoObjectType):
             raise Exception("Bad Request!")
 
         return tenant
+
+    @staticmethod
+    def resolve_contractSet(root: Tenant, info: ResolveInfo, **kwargs):
+        return info.context.loaders.contracts_by_tenant_loader.load(root.id)
+
+    @staticmethod
+    def resolve_domainSet(root: Tenant, info: ResolveInfo, **kwargs):
+        return info.context.loaders.domains_by_tenant_loader.load(root.id)

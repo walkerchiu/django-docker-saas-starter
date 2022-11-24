@@ -218,6 +218,7 @@ GRAPHENE = {
     "GRAPHIQL_HEADER_EDITOR_ENABLED": True,
     "MIDDLEWARE": [
         "core.graphql_jwt.middleware.JSONWebTokenMiddleware",
+        "tenant.graphql.middleware.LoaderMiddleware",
     ],
     # Set to True if the connection fields must have
     # either the first or last argument
