@@ -18,6 +18,7 @@ class UserType(DjangoObjectType):
             "email",
             "name",
             "last_login",
+            "profile",
         )
 
 
@@ -38,13 +39,9 @@ class UserNode(DjangoObjectType):
             "email": ["iexact", "icontains", "istartswith"],
             "name": ["iexact", "icontains", "istartswith"],
         }
-        fields = (
-            "id",
-            "email",
-            "name",
-            "last_login",
-            "created_at",
-            "updated_at",
+        exclude = (
+            "deleted",
+            "deleted_by_cascade",
         )
         order_by_field = "email"
         interfaces = (graphene.relay.Node,)
@@ -54,7 +51,7 @@ class UserNode(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info: ResolveInfo):
-        return queryset
+        return queryset.select_related("profile")
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):

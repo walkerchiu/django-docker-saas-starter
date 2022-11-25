@@ -73,6 +73,8 @@ class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
 class Profile(SafeDeleteModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     user = models.OneToOneField(User, models.CASCADE)
+    name = models.CharField(max_length=255, db_index=True, blank=True, null=True)
+    mobile = models.CharField(max_length=255, db_index=True, blank=True, null=True)
     birth = models.DateField(null=True)
 
     _safedelete_policy = SOFT_DELETE_CASCADE
