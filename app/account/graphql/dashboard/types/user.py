@@ -5,6 +5,7 @@ from graphene_django import DjangoObjectType
 from graphql.execution.base import ResolveInfo
 import graphene
 
+from account.graphql.dashboard.types.profile import ProfileNode
 from account.models import User
 from core.relay.connection import ExtendedConnection
 from tenant.models import Domain, Tenant
@@ -47,6 +48,7 @@ class UserNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
         connection_class = ExtendedConnection
 
+    profile = graphene.Field(ProfileNode)
     tenants = graphene.List(TenantsType)
 
     @classmethod
@@ -64,6 +66,10 @@ class UserNode(DjangoObjectType):
             return user
 
         raise Exception("Bad Request!")
+
+    @staticmethod
+    def resolve_profile(root: User, info, **kwargs):
+        return info.context.loaders.profile_by_user_loader.load(root.id)
 
     @staticmethod
     def resolve_tenants(root: User, info: ResolveInfo):
