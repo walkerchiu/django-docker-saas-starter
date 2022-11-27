@@ -9,7 +9,7 @@ class ExtendedConnection(graphene.relay.Connection):
     def __init_subclass_with_meta__(cls, node=None, name=None, **options):
         result = super().__init_subclass_with_meta__(node=node, name=name, **options)
         cls._meta.fields["total_count"] = graphene.Field(
-            type=graphene.Int,
+            type_=graphene.Int,
             name="totalCount",
             description="Number of items in the queryset.",
             required=True,

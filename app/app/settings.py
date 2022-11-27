@@ -129,6 +129,7 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 
 MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
+    "core.middleware.DepthCheckMiddleware",
     "core.middleware.HealthCheckMiddleware",
     "tenant.middleware.XTenantMiddleware",
     "django.middleware.security.SecurityMiddleware",
@@ -211,11 +212,12 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 
 GRAPHENE = {
     "ATOMIC_MUTATIONS": True,
-    "CAMELCASE_ERRORS": False,
+    "CAMELCASE_ERRORS": True,
     # By default GraphiQL headers editor tab is enabled, set to False to hide it
     # This sets headerEditorEnabled GraphiQL option, for details go to
     # https://github.com/graphql/graphiql/tree/main/packages/graphiql#options
     "GRAPHIQL_HEADER_EDITOR_ENABLED": True,
+    "GRAPHIQL_SHOULD_PERSIST_HEADERS": False,
     "MIDDLEWARE": [
         "core.graphql_jwt.middleware.JSONWebTokenMiddleware",
         "account.graphql.middleware.LoaderMiddleware",
@@ -229,6 +231,7 @@ GRAPHENE = {
     "SCHEMA": "django_root.schema.schema",
     "SCHEMA_INDENT": 2,
     "SCHEMA_OUTPUT": "schema.json",
+    "TESTING_ENDPOINT": "/graphql",
 }
 
 GRAPHENE_MAX_BREADTH = 1

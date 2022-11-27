@@ -1,9 +1,34 @@
+import json
+
 from django.conf import settings
 from django.http import HttpResponse
 from django.http.request import HttpRequest
 from django.utils.deprecation import MiddlewareMixin
 
+from graphql import validate, parse
+from graphene.validation import depth_limit_validator
 from ipware import get_client_ip
+
+from app.schemas.schema_auth import schema
+
+
+class DepthCheckMiddleware(MiddlewareMixin):
+    def __call__(self, request: HttpRequest):
+        if not settings.PLAYGROUND:
+            body = json.loads(request.body.decode())
+            query = body["query"]
+
+            validation_errors = validate(
+                schema=schema.graphql_schema,
+                document_ast=parse(query),
+                rules=(depth_limit_validator(max_depth=settings.GRAPHENE_MAX_DEPTH),),
+            )
+            if validation_errors:
+                raise Exception("Query is too nested")
+
+        response = self.get_response(request)
+
+        return response
 
 
 class HealthCheckMiddleware(MiddlewareMixin):

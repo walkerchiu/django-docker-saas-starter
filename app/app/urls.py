@@ -20,7 +20,6 @@ from django.urls import path
 from app.schemas.schema_auth import schema as schema_auth
 from app.schemas.schema_dashboard import schema as schema_dashboard
 from app.views_api import version
-from core.backend import DepthAnalysisBackend
 from core.views import ErrorGraphQLView
 
 
@@ -32,7 +31,6 @@ urlpatterns = [
         ErrorGraphQLView.as_view(
             graphiql=settings.PLAYGROUND,
             schema=schema_auth,
-            backend=DepthAnalysisBackend(),
         ),
     ),
     path(
@@ -40,7 +38,6 @@ urlpatterns = [
         ErrorGraphQLView.as_view(
             graphiql=settings.PLAYGROUND,
             schema=schema_dashboard,
-            backend=DepthAnalysisBackend(),
         ),
     ),
 ] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
