@@ -4,8 +4,8 @@ from django_filters import (
     FilterSet,
     OrderingFilter,
 )
+from graphene import ResolveInfo
 from graphene_django import DjangoConnectionField, DjangoObjectType
-from graphql.execution.base import ResolveInfo
 import graphene
 
 from core.relay.connection import ExtendedConnection

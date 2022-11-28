@@ -1,5 +1,5 @@
+from graphene import ResolveInfo
 from graphql_jwt.decorators import login_required
-from graphql.execution.base import ResolveInfo
 import graphene
 
 from account.graphql.dashboard.user import UserNode

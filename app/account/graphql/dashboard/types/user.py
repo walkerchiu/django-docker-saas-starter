@@ -1,8 +1,8 @@
 from django.conf import settings
 
 from django_tenants.utils import schema_context
+from graphene import ResolveInfo
 from graphene_django import DjangoObjectType
-from graphql.execution.base import ResolveInfo
 import graphene
 
 from account.graphql.dashboard.types.profile import ProfileNode

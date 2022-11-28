@@ -3,9 +3,9 @@ import re
 from django.core.exceptions import ValidationError
 from django.db import connection, transaction
 
+from graphene import ResolveInfo
 from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
-from graphql.execution.base import ResolveInfo
 import graphene
 
 from core.types import TaskStatusType
