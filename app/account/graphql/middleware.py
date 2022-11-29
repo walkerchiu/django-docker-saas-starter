@@ -1,6 +1,6 @@
 from graphene import ResolveInfo
 
-from core.loaders import generate_loader_for_one_to_one
+from account.graphql.loaders import generate_loader_for_one_to_one
 
 
 class DashboardLoaders:
