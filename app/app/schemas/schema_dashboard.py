@@ -2,16 +2,19 @@ from graphene import ResolveInfo
 from graphql_jwt.decorators import login_required
 import graphene
 
-from account.graphql.dashboard.user import UserNode
-from account.graphql.schema_dashboard import UserQuery
+from account.graphql.dashboard.types.user import UserNode
+from account.graphql.schema_dashboard import (
+    Mutation as AccountMutation,
+    Query as AccountQuery,
+)
 from role.graphql.schema_dashboard import Mutation as RoleMutation, Query as RoleQuery
 from tenant.graphql.schema_dashboard import Query as TenantQuery
 
 
 class Query(
+    AccountQuery,
     RoleQuery,
     TenantQuery,
-    UserQuery,
     graphene.ObjectType,
 ):
     viewer = graphene.Field(UserNode)
@@ -22,6 +25,7 @@ class Query(
 
 
 class Mutation(
+    AccountMutation,
     RoleMutation,
     graphene.ObjectType,
 ):
