@@ -1,12 +1,19 @@
+from graphene import ResolveInfo
+from graphql_jwt.decorators import login_required
 import graphene
 
+from account.graphql.auth.types.user import UserNode
 from core.graphql_jwt.relay import ObtainJSONWebToken, Refresh, Revoke, Verify
 
 
 class Query(
     graphene.ObjectType,
 ):
-    pass
+    viewer = graphene.Field(UserNode)
+
+    @login_required
+    def resolve_viewer(self, info: ResolveInfo, **kwargs):
+        return info.context.user
 
 
 class Mutation(
@@ -18,4 +25,4 @@ class Mutation(
     verify_token = Verify.Field()
 
 
-schema = graphene.Schema(mutation=Mutation)
+schema = graphene.Schema(mutation=Mutation, query=Query)
