@@ -74,6 +74,6 @@ class UserNode(DjangoObjectType):
             email = info.context.user.email
             records = Tenant.objects.filter(email=email)
             for record in records:
-                domain = Domain.objects.get(tenant=record, is_builtin=True)
+                domain = Domain.objects.get(tenant=record, is_primary=True)
                 tenants.append({"domain": domain.domain})
         return tenants
