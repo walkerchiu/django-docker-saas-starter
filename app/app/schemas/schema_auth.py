@@ -3,6 +3,7 @@ from graphql_jwt.decorators import login_required
 import graphene
 
 from account.graphql.auth.types.user import UserNode
+from account.graphql.schema_auth import Mutation as AccountMutation
 from core.graphql_jwt.relay import ObtainJSONWebToken, Refresh, Revoke, Verify
 
 
@@ -17,6 +18,7 @@ class Query(
 
 
 class Mutation(
+    AccountMutation,
     graphene.ObjectType,
 ):
     refresh_token = Refresh.Field()
