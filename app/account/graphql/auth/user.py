@@ -6,6 +6,7 @@ from django.db import transaction
 from graphene import ResolveInfo
 import graphene
 
+from account.graphql.auth.types.user import UserNode
 from account.models import User
 from account.services.user_service import UserService
 from core.utils import strip_dict
@@ -17,6 +18,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
         password = graphene.String(required=True)
 
     success = graphene.Boolean()
+    user = graphene.Field(UserNode)
 
     @classmethod
     @transaction.atomic
@@ -33,13 +35,13 @@ class CreateUser(graphene.relay.ClientIDMutation):
             raise ValidationError("The email is already in use!")
 
         user_service = UserService()
-        result, _ = user_service.create_user(
+        result, user = user_service.create_user(
             email=email,
             password=password,
         )
 
         if result:
-            return CreateUser(success=True)
+            return CreateUser(success=True, user=user)
         else:
             raise Exception("Can not create this user!")
 
