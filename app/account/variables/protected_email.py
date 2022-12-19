@@ -1,0 +1,18 @@
+PROTECTED_EMAIL = [
+    "account@example.com",
+    "admin@example.com",
+    "administrator@example.com",
+    "contact@example.com",
+    "demo@example.com",
+    "help@example.com",
+    "hr@example.com",
+    "info@example.com",
+    "it@example.com",
+    "manager@example.com",
+    "member@example.com",
+    "mis@example.com",
+    "news@example.com",
+    "service@example.com",
+    "system@example.com",
+    "user@example.com",
+]
