@@ -6,7 +6,7 @@ import graphene
 
 from account.graphql.dashboard.types.profile import ProfileNode
 from account.models import Profile
-from core.utils import strip_dict
+from core.decorators import strip_input
 
 
 class UpdateProfile(graphene.relay.ClientIDMutation):
@@ -19,9 +19,9 @@ class UpdateProfile(graphene.relay.ClientIDMutation):
     profile = graphene.Field(ProfileNode)
 
     @classmethod
+    @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        input = strip_dict(input)
         name = input["name"] if "name" in input else None
         mobile = input["mobile"] if "mobile" in input else None
         birth = input["birth"] if "birth" in input else None

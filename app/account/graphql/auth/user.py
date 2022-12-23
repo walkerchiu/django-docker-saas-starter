@@ -10,7 +10,7 @@ from account.graphql.auth.types.user import UserNode
 from account.models import User
 from account.services.user_service import UserService
 from account.variables.protected_email import PROTECTED_EMAIL
-from core.utils import strip_dict
+from core.decorators import strip_input
 
 
 class CreateUser(graphene.relay.ClientIDMutation):
@@ -22,9 +22,9 @@ class CreateUser(graphene.relay.ClientIDMutation):
     user = graphene.Field(UserNode)
 
     @classmethod
+    @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        input = strip_dict(input)
         email = input["email"]
         password = input["password"]
 

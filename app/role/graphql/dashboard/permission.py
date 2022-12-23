@@ -8,8 +8,8 @@ from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
 import graphene
 
+from core.decorators import strip_input
 from core.types import TaskStatusType
-from core.utils import strip_dict
 from organization.models import Organization
 from role.graphql.dashboard.types.permission import PermissionNode
 from role.models import Permission, PermissionTrans
@@ -28,9 +28,9 @@ class CreatePermission(graphene.relay.ClientIDMutation):
     permission = graphene.Field(PermissionNode)
 
     @classmethod
+    @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        input = strip_dict(input)
         languageCode = input["languageCode"]
         slug = input["slug"]
         name = input["name"]
@@ -85,9 +85,9 @@ class DeletePermissions(graphene.relay.ClientIDMutation):
     warnings = graphene.Field(TaskStatusType)
 
     @classmethod
+    @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        input = strip_dict(input)
         ids = input["ids"] if "ids" in input else []
 
         warnings = {
@@ -132,9 +132,9 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
     permission = graphene.Field(PermissionNode)
 
     @classmethod
+    @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        input = strip_dict(input)
         id = input["id"]
         languageCode = input["languageCode"]
         slug = input["slug"]
