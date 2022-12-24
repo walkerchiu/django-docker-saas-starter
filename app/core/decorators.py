@@ -1,5 +1,9 @@
+from functools import wraps
+
+
 def strip_input(func):
-    def wrapped(info, *args, **input):
+    @wraps(func)
+    def wrapper(info, *args, **input):
         for key, item in input.items():
             if isinstance(item, str):
                 input[key] = item.strip()
@@ -18,4 +22,4 @@ def strip_input(func):
 
         return result
 
-    return wrapped
+    return wrapper
