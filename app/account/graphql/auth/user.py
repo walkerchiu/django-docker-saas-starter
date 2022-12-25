@@ -1,5 +1,3 @@
-import re
-
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
@@ -11,6 +9,7 @@ from account.models import User
 from account.services.user_service import UserService
 from account.variables.protected_email import PROTECTED_EMAIL
 from core.decorators import strip_input
+from core.utils import is_valid_email
 
 
 class CreateUser(graphene.relay.ClientIDMutation):
@@ -28,9 +27,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
         email = input["email"]
         password = input["password"]
 
-        if not re.fullmatch(
-            r"\b[A-Za-z0-9._%+-]+@[A-Za-z0-9.-]+\.[A-Z|a-z]{2,}\b", email
-        ):
+        if not is_valid_email(email):
             raise ValidationError("The email is invalid!")
         elif email in PROTECTED_EMAIL:
             raise ValidationError("The email is being protected!")
