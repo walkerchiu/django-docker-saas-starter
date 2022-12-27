@@ -5,7 +5,6 @@ services:
     build:
       context: ./app
       dockerfile: Dockerfile.local
-    command: gunicorn --bind 0.0.0.0:8000 --preload --workers 3 app.wsgi:application
     volumes:
       - ./app/:/usr/src/app/
     ports:

@@ -39,9 +39,7 @@ COPY --from=builder /usr/src/app/wheels /wheels
 COPY --from=builder /usr/src/app/requirements.txt .
 RUN pip install --no-cache /wheels/*
 
-RUN pip install flake8
 COPY . .
-RUN flake8 --ignore=E221,E501,W503,E722 ./account ./app ./core ./organization ./role ./tenant
 
 EXPOSE 8000
 
