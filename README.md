@@ -51,6 +51,18 @@ ext install markdownlint
 ext install markdown-table-prettify
 ```
 
+Pre Commit
+
+```sh
+# pre-commit
+
+# Install the git hook scripts
+pre-commit install
+
+# Run against all the files
+pre-commit run --all-files
+```
+
 ## Building Up the Project for Development
 
 ### Install Docker
