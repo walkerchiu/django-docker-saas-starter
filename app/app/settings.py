@@ -318,6 +318,13 @@ USE_I18N = True
 USE_TZ = True
 
 
+# Storage
+# https://docs.djangoproject.com/en/4.1/ref/settings/#media-root
+
+MEDIA_URL = "media/"
+MEDIA_ROOT = os.path.join(BASE_DIR, "storage")
+
+
 # Static files (CSS, JavaScript, Images)
 # https://docs.djangoproject.com/en/4.1/howto/static-files/
 

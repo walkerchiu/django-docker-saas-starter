@@ -24,20 +24,24 @@ from core.views import ErrorGraphQLView
 
 
 # GraphQL
-urlpatterns = [
-    path("api/version", version, name="version"),
-    path(
-        "auth/graphql",
-        ErrorGraphQLView.as_view(
-            graphiql=settings.PLAYGROUND,
-            schema=schema_auth,
+urlpatterns = (
+    [
+        path("api/version", version, name="version"),
+        path(
+            "auth/graphql",
+            ErrorGraphQLView.as_view(
+                graphiql=settings.PLAYGROUND,
+                schema=schema_auth,
+            ),
         ),
-    ),
-    path(
-        "dashboard/graphql",
-        ErrorGraphQLView.as_view(
-            graphiql=settings.PLAYGROUND,
-            schema=schema_dashboard,
+        path(
+            "dashboard/graphql",
+            ErrorGraphQLView.as_view(
+                graphiql=settings.PLAYGROUND,
+                schema=schema_dashboard,
+            ),
         ),
-    ),
-] + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+    ]
+    + static(settings.MEDIA_URL, document_root=settings.MEDIA_ROOT)
+    + static(settings.STATIC_URL, document_root=settings.STATIC_ROOT)
+)
