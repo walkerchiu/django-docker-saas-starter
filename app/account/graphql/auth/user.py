@@ -12,6 +12,28 @@ from core.decorators import strip_input
 from core.utils import is_valid_email
 
 
+class CheckEmailAvailable(graphene.relay.ClientIDMutation):
+    class Input:
+        email = graphene.String(required=True)
+
+    success = graphene.Boolean()
+
+    @classmethod
+    @strip_input
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
+        email = input["email"]
+
+        if not is_valid_email(email):
+            raise ValidationError("The email is invalid!")
+        elif email in PROTECTED_EMAIL:
+            raise ValidationError("The email is being protected!")
+        elif User.objects.filter(email=email).exists():
+            raise ValidationError("The email is already in use!")
+
+        return CheckEmailAvailable(success=True)
+
+
 class CreateUser(graphene.relay.ClientIDMutation):
     class Input:
         email = graphene.String(required=True)
@@ -51,4 +73,5 @@ class UserQuery(graphene.ObjectType):
 
 
 class UserMutation(graphene.ObjectType):
+    check_email_available = CheckEmailAvailable.Field()
     create_user = CreateUser.Field()
