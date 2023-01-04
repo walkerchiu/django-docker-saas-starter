@@ -34,6 +34,24 @@ class CheckEmailAvailable(graphene.relay.ClientIDMutation):
         return CheckEmailAvailable(success=True)
 
 
+class CheckNameAvailable(graphene.relay.ClientIDMutation):
+    class Input:
+        name = graphene.String(required=True)
+
+    success = graphene.Boolean()
+
+    @classmethod
+    @strip_input
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
+        name = input["name"]
+
+        if User.objects.filter(name=name).exists():
+            raise ValidationError("The name is already in use!")
+
+        return CheckNameAvailable(success=True)
+
+
 class CreateUser(graphene.relay.ClientIDMutation):
     class Input:
         email = graphene.String(required=True)
@@ -73,5 +91,6 @@ class UserQuery(graphene.ObjectType):
 
 
 class UserMutation(graphene.ObjectType):
+    check_name_available = CheckNameAvailable.Field()
     check_email_available = CheckEmailAvailable.Field()
     create_user = CreateUser.Field()
