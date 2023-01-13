@@ -1,7 +1,10 @@
+from django.conf import settings
 from django.core.exceptions import ValidationError
 from django.db import transaction
 
+from django_tenants.utils import schema_context
 from graphene import ResolveInfo
+from graphql_jwt.decorators import login_required
 import graphene
 
 from account.graphql.auth.types.user import UserNode
@@ -10,6 +13,7 @@ from account.services.user_service import UserService
 from account.variables.protected_email import PROTECTED_EMAIL
 from core.decorators import strip_input
 from core.utils import is_valid_email
+from tenant.services.tenant_service import TenantService
 
 
 class CheckEmailAvailable(graphene.relay.ClientIDMutation):
@@ -99,6 +103,44 @@ class CreateUser(graphene.relay.ClientIDMutation):
             raise Exception("Can not create this user!")
 
 
+class UpdateEmail(graphene.relay.ClientIDMutation):
+    class Input:
+        email = graphene.String(required=True)
+
+    success = graphene.Boolean()
+    user = graphene.Field(UserNode)
+
+    @classmethod
+    @login_required
+    @strip_input
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
+        email = input["email"]
+
+        user = info.context.user
+
+        if not is_valid_email(email):
+            raise ValidationError("The email is invalid!")
+        elif email in PROTECTED_EMAIL:
+            raise ValidationError("The email is being protected!")
+        elif User.objects.filter(email=email).exclude(id=user.id).exists():
+            raise ValidationError("The email is already in use!")
+
+        email_original = user.email
+
+        user.email = email
+        user.save()
+
+        if user.email != email_original:
+            with schema_context(settings.PUBLIC_SCHEMA_NAME):
+                tenant_service = TenantService()
+                tenant_service.updateEmail(
+                    email_original=email_original, email_new=user.email
+                )
+
+        return UpdateEmail(success=True, user=user)
+
+
 class UserQuery(graphene.ObjectType):
     pass
 
@@ -107,3 +149,4 @@ class UserMutation(graphene.ObjectType):
     check_name_available = CheckNameAvailable.Field()
     check_email_available = CheckEmailAvailable.Field()
     create_user = CreateUser.Field()
+    update_email = UpdateEmail.Field()
