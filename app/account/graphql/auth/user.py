@@ -141,6 +141,31 @@ class UpdateEmail(graphene.relay.ClientIDMutation):
         return UpdateEmail(success=True, user=user)
 
 
+class UpdateName(graphene.relay.ClientIDMutation):
+    class Input:
+        name = graphene.String(required=True)
+
+    success = graphene.Boolean()
+    user = graphene.Field(UserNode)
+
+    @classmethod
+    @login_required
+    @strip_input
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
+        name = input["name"]
+
+        user = info.context.user
+
+        if User.objects.filter(name=name).exclude(id=user.id).exists():
+            raise ValidationError("The email is already in use!")
+
+        user.name = name
+        user.save()
+
+        return UpdateEmail(success=True, user=user)
+
+
 class UserQuery(graphene.ObjectType):
     pass
 
@@ -150,3 +175,4 @@ class UserMutation(graphene.ObjectType):
     check_email_available = CheckEmailAvailable.Field()
     create_user = CreateUser.Field()
     update_email = UpdateEmail.Field()
+    update_name = UpdateName.Field()
