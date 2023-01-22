@@ -7,7 +7,8 @@ from django.db.utils import IntegrityError
 
 from safedelete.models import HARD_DELETE
 
-from tenant.models import Contract, Domain, Tenant
+from tenant.models import Contract, Tenant
+from tenant.services.domain_service import DomainService
 
 
 class TenantService:
@@ -30,13 +31,13 @@ class TenantService:
             contract.save()
 
             # Add a domain for the tenant
-            domain = Domain(
+            domain_service = DomainService()
+            domain_service.create_domain(
                 tenant=tenant,
-                domain=subdomain + "." + settings.APP_DOMAIN,
+                value=subdomain + "." + settings.APP_DOMAIN,
                 is_primary=True,
                 is_builtin=True,
             )
-            domain.save()
 
         except IntegrityError:
             result = False
