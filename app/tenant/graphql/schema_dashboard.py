@@ -1,7 +1,7 @@
 import graphene
 
 from tenant.graphql.dashboard.contract import ContractQuery
-from tenant.graphql.dashboard.domain import DomainQuery
+from tenant.graphql.dashboard.domain import DomainMutation, DomainQuery
 from tenant.graphql.dashboard.tenant import TenantQuery
 
 
@@ -15,9 +15,10 @@ class Query(
 
 
 class Mutation(
+    DomainMutation,
     graphene.ObjectType,
 ):
     pass
 
 
-schema = graphene.Schema(query=Query)
+schema = graphene.Schema(mutation=Mutation, query=Query)

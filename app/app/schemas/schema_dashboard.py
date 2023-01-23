@@ -8,7 +8,10 @@ from account.graphql.schema_dashboard import (
     Query as AccountQuery,
 )
 from role.graphql.schema_dashboard import Mutation as RoleMutation, Query as RoleQuery
-from tenant.graphql.schema_dashboard import Query as TenantQuery
+from tenant.graphql.schema_dashboard import (
+    Mutation as TenantMutation,
+    Query as TenantQuery,
+)
 
 
 class Query(
@@ -27,6 +30,7 @@ class Query(
 class Mutation(
     AccountMutation,
     RoleMutation,
+    TenantMutation,
     graphene.ObjectType,
 ):
     pass
