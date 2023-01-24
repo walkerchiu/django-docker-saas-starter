@@ -54,7 +54,7 @@ class Domain(DomainMixin, CreateUpdateDateAndSafeDeleteMixin):
         related_name="domains",
         on_delete=models.CASCADE,
     )
-    domain = models.CharField(max_length=253, unique=True, db_index=True)
+    domain = models.CharField(max_length=253, db_index=True)
     is_builtin = models.BooleanField(default=False)
 
     _safedelete_policy = SOFT_DELETE_CASCADE
