@@ -13,6 +13,7 @@ from core.decorators import strip_input
 from core.types import TaskStatusType
 from tenant.graphql.dashboard.types.domain import DomainNode
 from tenant.models import Domain, Tenant
+from tenant.variables.protected_subdomain import PROTECTED_SUBDOMAIN
 
 
 class CreateDomain(graphene.relay.ClientIDMutation):
@@ -35,6 +36,8 @@ class CreateDomain(graphene.relay.ClientIDMutation):
 
             if not validators.domain(value):
                 raise Exception("The domain is invalid!")
+            elif value in PROTECTED_SUBDOMAIN:
+                raise ValidationError("The domain is being protected!")
             elif Domain.objects.filter(domain=value).exists():
                 raise ValidationError("The domain is already in use!")
 
@@ -136,6 +139,8 @@ class UpdateDomain(graphene.relay.ClientIDMutation):
 
             if not validators.domain(value):
                 raise Exception("The domain is invalid!")
+            elif value in PROTECTED_SUBDOMAIN:
+                raise ValidationError("The domain is being protected!")
 
             try:
                 _, tenant_id = from_global_id(tenantId)
