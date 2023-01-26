@@ -51,6 +51,15 @@ ext install markdownlint
 ext install markdown-table-prettify
 ```
 
+Git Commit Message
+
+```sh
+# commitlint
+npm install
+npx husky install
+chmod a+x .husky/commit-msg
+```
+
 Pre Commit
 
 ```sh
