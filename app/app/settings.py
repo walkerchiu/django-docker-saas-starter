@@ -27,6 +27,7 @@ django.utils.encoding.force_text = force_str
 env = environ.Env(
     DEBUG=(bool, False),
     PLAYGROUND=(bool, True),
+    RECAPTCHA_ENABLED=(bool, True),
     JWT_EXPIRATION_MINUTES=(int, 60),
     JWT_REFRESH_EXPIRATION_DAYS=(int, 7),
     JWT_REVOKE_AND_REFRESH=(bool, True),
@@ -83,6 +84,7 @@ SHARED_APPS = (
     "django.contrib.contenttypes",
     "django.contrib.staticfiles",
     "django.contrib.messages",
+    "captcha",
     "corsheaders",
     "django_tenants",
     "graphene_django",
@@ -192,7 +194,7 @@ CORS_URLS_REGEX = r"^/(api|auth|dashboard)/.*$"
 CORS_ALLOW_ALL_ORIGINS = False
 
 CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https?://(\w+\.)?localhost:3000$",
+    r"^https?://(?:\w+\.)?localhost(?:\.\w+)*:(?:3000)$",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -365,3 +367,26 @@ AWS_S3_OBJECT_PARAMETERS = {
     "CacheControl": "max-age=" + str(env("AWS_QUERYSTRING_EXPIRE")),
 }
 AWS_QUERYSTRING_EXPIRE = env("AWS_QUERYSTRING_EXPIRE")
+
+
+CAPTCHA = {
+    # https://developers.google.com/recaptcha/docs/versions
+    # https://cloud.google.com/recaptcha-enterprise/docs/compare-versions
+    "google_recaptcha3": {
+        "enabled": env("RECAPTCHA_ENABLED"),
+        "key_public": env("RECAPTCHA_PUBLIC_KEY"),
+        "key_private": env("RECAPTCHA_PRIVATE_KEY"),
+        "endpoint": "https://www.google.com/recaptcha/api/siteverify",
+        "threshold": {
+            "auth": 0.5,
+            "default": 0.5,
+        },
+        "timeout": 2,
+    },
+}
+
+
+# SILENCED_SYSTEM_CHECKS
+# https://docs.djangoproject.com/en/4.1/ref/settings/#silenced-system-checks
+
+SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]

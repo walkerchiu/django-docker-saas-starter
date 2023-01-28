@@ -13,6 +13,7 @@ from graphql_jwt.refresh_token.signals import (
 from graphql_jwt.signals import token_issued, token_refreshed
 import graphene
 
+from core.decorators import google_captcha3
 from core.graphql_jwt import mixins
 from core.graphql_jwt.decorators import token_auth
 from core.graphql_jwt.refresh_token.relay import DeleteRefreshTokenCookie, Revoke
@@ -41,6 +42,10 @@ class JSONWebTokenMutation(mixins.ObtainJSONWebTokenMixin, graphene.ClientIDMuta
                     required=True,
                 ),
                 "password": graphene.InputField(graphene.String, required=True),
+                "captcha": graphene.InputField(
+                    graphene.String,
+                    required=settings.CAPTCHA["google_recaptcha3"]["enabled"],
+                ),
             },
         )
         return super().Field(*args, **kwargs)
@@ -98,9 +103,12 @@ class Verify(mixins.VerifyMixin, graphene.ClientIDMutation):
 
 class Refresh(mixins.RefreshMixin, graphene.ClientIDMutation):
     class Input(mixins.RefreshMixin.Fields):
-        """Refresh Input"""
+        captcha = graphene.String(
+            required=settings.CAPTCHA["google_recaptcha3"]["enabled"]
+        )
 
     @classmethod
+    @google_captcha3("auth")
     def mutate_and_get_payload(cls, *args, **kwargs):
         return cls.refresh(*args, **kwargs)
 

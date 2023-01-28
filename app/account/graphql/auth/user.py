@@ -11,7 +11,7 @@ from account.graphql.auth.types.user import UserNode
 from account.models import User
 from account.services.user_service import UserService
 from account.variables.protected_email import PROTECTED_EMAIL
-from core.decorators import strip_input
+from core.decorators import google_captcha3, strip_input
 from core.utils import is_valid_email
 from tenant.services.tenant_service import TenantService
 
@@ -19,11 +19,15 @@ from tenant.services.tenant_service import TenantService
 class CheckEmailAvailable(graphene.relay.ClientIDMutation):
     class Input:
         email = graphene.String(required=True)
+        captcha = graphene.String(
+            required=settings.CAPTCHA["google_recaptcha3"]["enabled"]
+        )
 
     success = graphene.Boolean()
 
     @classmethod
     @strip_input
+    @google_captcha3("auth")
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         email = input["email"]
@@ -50,11 +54,15 @@ class CheckEmailAvailable(graphene.relay.ClientIDMutation):
 class CheckNameAvailable(graphene.relay.ClientIDMutation):
     class Input:
         name = graphene.String(required=True)
+        captcha = graphene.String(
+            required=settings.CAPTCHA["google_recaptcha3"]["enabled"]
+        )
 
     success = graphene.Boolean()
 
     @classmethod
     @strip_input
+    @google_captcha3("auth")
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         name = input["name"]
@@ -73,12 +81,16 @@ class CreateUser(graphene.relay.ClientIDMutation):
     class Input:
         email = graphene.String(required=True)
         password = graphene.String(required=True)
+        captcha = graphene.String(
+            required=settings.CAPTCHA["google_recaptcha3"]["enabled"]
+        )
 
     success = graphene.Boolean()
     user = graphene.Field(UserNode)
 
     @classmethod
     @strip_input
+    @google_captcha3("auth")
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         email = input["email"]
