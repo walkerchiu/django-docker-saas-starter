@@ -5,11 +5,13 @@ from django.http import HttpResponse
 from django.http.request import HttpRequest
 from django.utils.deprecation import MiddlewareMixin
 
+from django_tenants.utils import schema_context
 from graphql import validate, parse
 from graphene.validation import depth_limit_validator
 from ipware import get_client_ip
 
 from app.schemas.schema_auth import schema
+from tenant.models import Domain
 
 
 class DepthCheckMiddleware(MiddlewareMixin):
@@ -25,6 +27,26 @@ class DepthCheckMiddleware(MiddlewareMixin):
             )
             if validation_errors:
                 raise Exception("Query is too nested")
+
+        response = self.get_response(request)
+
+        return response
+
+
+class DomainCorsMiddleware(MiddlewareMixin):
+    def __call__(self, request: HttpRequest):
+        for url in settings.CORS_ALLOWED_ORIGINS:
+            https_url = url.replace("http://", "https://")
+            if https_url not in settings.CORS_ALLOWED_ORIGINS:
+                settings.CORS_ALLOWED_ORIGINS.append(https_url)
+            if https_url not in settings.CORS_ORIGIN_WHITELIST:
+                settings.CORS_ORIGIN_WHITELIST.append(https_url)
+
+        with schema_context(settings.PUBLIC_SCHEMA_NAME):
+            domains = Domain.objects.values_list("domain", flat=True)
+            for domain in domains:
+                settings.CORS_ALLOWED_ORIGINS.append("https://" + domain)
+                settings.CORS_ORIGIN_WHITELIST.append("https://" + domain)
 
         response = self.get_response(request)
 

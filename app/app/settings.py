@@ -130,6 +130,7 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 # https://docs.djangoproject.com/en/4.1/topics/http/middleware/
 
 MIDDLEWARE = [
+    "core.middleware.DomainCorsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
     "core.middleware.DepthCheckMiddleware",
     "core.middleware.HealthCheckMiddleware",
@@ -193,8 +194,9 @@ CORS_URLS_REGEX = r"^/(api|auth|dashboard)/.*$"
 
 CORS_ALLOW_ALL_ORIGINS = False
 
-CORS_ALLOWED_ORIGIN_REGEXES = [
-    r"^https?://(?:\w+\.)?localhost(?:\.\w+)*:(?:3000)$",
+CORS_ALLOWED_ORIGINS = [
+    "http://localhost:3000",
+    "http://localhost.test:3000",
 ]
 
 CORS_ALLOW_METHODS = [
@@ -206,6 +208,8 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-Tenant",
 ]
+
+CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 
 
 # GraphQL
