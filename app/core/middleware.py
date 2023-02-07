@@ -41,12 +41,15 @@ class DomainCorsMiddleware(MiddlewareMixin):
                 settings.CORS_ALLOWED_ORIGINS.append(https_url)
             if https_url not in settings.CORS_ORIGIN_WHITELIST:
                 settings.CORS_ORIGIN_WHITELIST.append(https_url)
+            if https_url not in settings.CSRF_TRUSTED_ORIGINS:
+                settings.CSRF_TRUSTED_ORIGINS.append(https_url)
 
         with schema_context(settings.PUBLIC_SCHEMA_NAME):
             domains = Domain.objects.values_list("domain", flat=True)
             for domain in domains:
                 settings.CORS_ALLOWED_ORIGINS.append("https://" + domain)
                 settings.CORS_ORIGIN_WHITELIST.append("https://" + domain)
+                settings.CSRF_TRUSTED_ORIGINS.append("https://" + domain)
 
         response = self.get_response(request)
 

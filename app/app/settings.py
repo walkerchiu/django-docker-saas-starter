@@ -212,6 +212,12 @@ CORS_ALLOW_HEADERS = list(default_headers) + [
 CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 
 
+# CSRF
+# https://docs.djangoproject.com/en/4.1/ref/settings/#csrf-trusted-origins
+
+CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
+
+
 # GraphQL
 # https://docs.graphene-python.org/en/latest/quickstart/
 # https://django-graphql-jwt.domake.io/
