@@ -40,6 +40,8 @@ class PublishableModel(models.Model):
 
 
 class TranslationModel(models.Model):
+    # RFC 5646 4.4.1.  Working with Limited Buffer Sizes
+    # https://www.rfc-editor.org/rfc/rfc5646#section-4.4.1
     language_code = models.CharField(max_length=35, default="zh-TW")
 
     class Meta:
