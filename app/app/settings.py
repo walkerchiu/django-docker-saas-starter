@@ -162,12 +162,15 @@ DATABASES = {
 
 # Cache
 # https://docs.djangoproject.com/en/4.1/topics/cache/
+# https://django-tenants.readthedocs.io/en/latest/install.html#caching
 
 if APP_ENV in ["dev", "staging", "prod"]:
     CACHES = {
         "default": {
             "BACKEND": "django_redis.cache.RedisCache",
             "LOCATION": env("AWS_CACHE_ENDPOINT"),
+            "KEY_FUNCTION": "django_tenants.cache.make_key",
+            "REVERSE_KEY_FUNCTION": "django_tenants.cache.reverse_key",
             "OPTIONS": {
                 # ElastiCache: RedisCluster(Cluster mode: On)
                 # "REDIS_CLIENT_CLASS": "rediscluster.RedisCluster",
@@ -183,6 +186,8 @@ else:
         "default": {
             "BACKEND": "django.core.cache.backends.locmem.LocMemCache",
             "LOCATION": "unique-snowflake",
+            "KEY_FUNCTION": "django_tenants.cache.make_key",
+            "REVERSE_KEY_FUNCTION": "django_tenants.cache.reverse_key",
         }
     }
 
