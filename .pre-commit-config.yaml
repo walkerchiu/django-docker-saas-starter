@@ -1,4 +1,12 @@
 repos:
+- repo: https://github.com/charliermarsh/ruff-pre-commit
+  rev: v0.0.254
+  hooks:
+    - id: ruff
+      args:
+        - --ignore=E501,E722
+        - --line-length=88
+        - --target-version=py311
 - repo: https://github.com/crate-ci/typos
   rev: v1.13.6
   hooks:
