@@ -209,7 +209,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         user.name = name
         user.save()
 
-        if user.email != email_original:
+        if user.is_owner and user.email != email_original:
             with schema_context(settings.PUBLIC_SCHEMA_NAME):
                 tenant_service = TenantService()
                 tenant_service.updateEmail(
