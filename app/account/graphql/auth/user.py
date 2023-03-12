@@ -180,41 +180,56 @@ class UpdateName(graphene.relay.ClientIDMutation):
 
 class UpdateUser(graphene.relay.ClientIDMutation):
     class Input:
-        email = graphene.String(required=True)
+        oldEmail = graphene.String(required=True)
+        newEmail = graphene.String(required=True)
         name = graphene.String(required=True)
+        password = graphene.String(required=True)
 
     success = graphene.Boolean()
     user = graphene.Field(UserNode)
 
     @classmethod
-    @login_required
     @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        email = input["email"]
+        old_email = input["oldEmail"]
+        new_email = input["newEmail"]
         name = input["name"]
+        password = input["password"]
 
-        user = info.context.user
+        if not is_valid_email(old_email):
+            raise ValidationError("The old_email is invalid!")
+        elif not is_valid_email(new_email):
+            raise ValidationError("The new_email is invalid!")
+        elif new_email in PROTECTED_EMAIL:
+            raise ValidationError("The new_email is being protected!")
 
-        if not is_valid_email(email):
-            raise ValidationError("The email is invalid!")
-        elif email in PROTECTED_EMAIL:
-            raise ValidationError("The email is being protected!")
-        elif User.objects.filter(email=email).exclude(id=user.id).exists():
-            raise ValidationError("The email is already in use!")
+        try:
+            user = User.objects.get(email=old_email)
+        except:
+            raise Exception("Can not find this user!")
+        else:
+            if not user.check_password(password):
+                raise ValidationError("The password is invalid!")
+            elif User.objects.filter(email=new_email).exclude(id=user.id).exists():
+                raise ValidationError("The new_email is already in use!")
 
-        email_original = user.email
+        if user.is_owner and old_email != new_email:
+            user.email = new_email
 
-        user.email = email
         user.name = name
         user.save()
 
-        if user.is_owner and user.email != email_original:
+        if user.is_owner and user.email != old_email:
             with schema_context(settings.PUBLIC_SCHEMA_NAME):
                 tenant_service = TenantService()
                 tenant_service.updateEmail(
-                    email_original=email_original, email_new=user.email
+                    email_original=old_email,
+                    email_new=new_email,
                 )
+
+        user.name = name
+        user.save()
 
         return UpdateUser(success=True, user=user)
 
