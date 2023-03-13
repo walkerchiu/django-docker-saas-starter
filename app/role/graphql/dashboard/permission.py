@@ -1,5 +1,3 @@
-import re
-
 from django.core.exceptions import ValidationError
 from django.db import connection, transaction
 
@@ -10,6 +8,7 @@ import graphene
 
 from core.decorators import strip_input
 from core.types import TaskStatusType
+from core.utils import is_slug_invalid
 from organization.models import Organization
 from role.graphql.dashboard.types.permission import PermissionNode
 from role.models import Permission, PermissionTrans
@@ -40,11 +39,7 @@ class CreatePermission(graphene.relay.ClientIDMutation):
 
         if not languageCode:
             raise ValidationError("The languageCode is invalid!")
-        if (
-            not slug
-            or re.search(r"\W", slug.replace("-", ""))
-            or any(str in slug for str in ["\\"])
-        ):
+        if is_slug_invalid(slug):
             raise ValidationError("The slug is invalid!")
         if not name:
             raise ValidationError("The name is invalid!")
@@ -147,11 +142,7 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
             raise ValidationError("The id is invalid!")
         if not languageCode:
             raise ValidationError("The languageCode is invalid!")
-        if (
-            not slug
-            or re.search(r"\W", slug.replace("-", ""))
-            or any(str in slug for str in ["\\"])
-        ):
+        if is_slug_invalid(slug):
             raise ValidationError("The slug is invalid!")
         if not name:
             raise ValidationError("The name is invalid!")
