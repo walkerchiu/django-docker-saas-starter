@@ -50,7 +50,7 @@ class JSONWebTokenMutation(mixins.ObtainJSONWebTokenMixin, graphene.Mutation):
 
         if (
             info.context.headers.get("X-Tenant")
-            == "account" + "." + settings.APP_DOMAIN
+            == "account" + "." + settings.DOMAIN_WEBSITE
         ):
             with schema_context(settings.PUBLIC_SCHEMA_NAME):
                 tenant = (

@@ -39,9 +39,12 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
-APP_DOMAIN = env("APP_DOMAIN")
 APP_ENV = env("APP_ENV")
 APP_NAME = env("APP_NAME")
+
+DOMAIN_DASHBOARD = env("DOMAIN_DASHBOARD")
+DOMAIN_HQ = env("DOMAIN_HQ")
+DOMAIN_WEBSITE = env("DOMAIN_WEBSITE")
 
 
 AWS_ACCESS_KEY_ID = env("AWS_ACCESS_KEY_ID")

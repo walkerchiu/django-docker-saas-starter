@@ -34,7 +34,7 @@ class TenantService:
             domain_service = DomainService()
             domain_service.create_domain(
                 tenant=tenant,
-                value=subdomain + "." + settings.APP_DOMAIN,
+                value=subdomain + "." + settings.DOMAIN_WEBSITE,
                 is_primary=True,
                 is_builtin=True,
             )
