@@ -29,11 +29,11 @@ class XTenantMiddleware(TenantMainMiddleware):
     def get_tenant(
         self, tenant_model: Type[Tenant], request: HttpRequest
     ) -> Type[Tenant]:
-        if settings.PLAYGROUND:
-            return tenant_model.objects.first()
+        if domain := request.headers.get("X-Tenant"):
+            return tenant_model.objects.get(domains__domain=domain)
         else:
-            if domain := request.headers.get("X-Tenant"):
-                return tenant_model.objects.get(domains__domain=domain)
+            if settings.PLAYGROUND:
+                return tenant_model.objects.first()
             else:
                 return tenant_model.objects.get(
                     domains__domain=self.hostname_from_request(request)
