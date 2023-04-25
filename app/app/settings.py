@@ -2,10 +2,10 @@
 Django settings for app project.
 
 For more information on this file, see
-https://docs.djangoproject.com/en/4.1/topics/settings/
+https://docs.djangoproject.com/en/4.2/topics/settings/
 
 For the full list of settings and their values, see
-https://docs.djangoproject.com/en/4.1/ref/settings/
+https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from datetime import timedelta
@@ -65,7 +65,7 @@ if APP_ENV in ["dev", "staging", "prod"]:
 
 
 # Quick-start development settings - unsuitable for production
-# See https://docs.djangoproject.com/en/4.1/howto/deployment/checklist/
+# See https://docs.djangoproject.com/en/4.2/howto/deployment/checklist/
 
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = env("SECRET_KEY")
@@ -117,20 +117,20 @@ INSTALLED_APPS = list(SHARED_APPS) + [
 
 
 # Route
-# https://docs.djangoproject.com/en/4.1/topics/http/urls/
+# https://docs.djangoproject.com/en/4.2/topics/http/urls/
 
 ROOT_URLCONF = "app.urls"
 APPEND_SLASH = False
 
 
 # ALLOWED_HOSTS
-# https://docs.djangoproject.com/en/4.1/ref/settings/#allowed-hosts
+# https://docs.djangoproject.com/en/4.2/ref/settings/#allowed-hosts
 
 ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 
 
 # Middleware
-# https://docs.djangoproject.com/en/4.1/topics/http/middleware/
+# https://docs.djangoproject.com/en/4.2/topics/http/middleware/
 
 MIDDLEWARE = [
     "core.middleware.DomainCorsMiddleware",
@@ -149,7 +149,7 @@ MIDDLEWARE = [
 
 
 # Database
-# https://docs.djangoproject.com/en/4.1/ref/settings/#databases
+# https://docs.djangoproject.com/en/4.2/ref/settings/#databases
 
 DATABASES = {
     "default": {
@@ -164,7 +164,7 @@ DATABASES = {
 
 
 # Cache
-# https://docs.djangoproject.com/en/4.1/topics/cache/
+# https://docs.djangoproject.com/en/4.2/topics/cache/
 # https://django-tenants.readthedocs.io/en/latest/install.html#caching
 
 if APP_ENV in ["dev", "staging", "prod"]:
@@ -221,7 +221,7 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 
 
 # CSRF
-# https://docs.djangoproject.com/en/4.1/ref/settings/#csrf-trusted-origins
+# https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
 
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
@@ -277,7 +277,7 @@ GRAPHQL_JWT = {
 
 
 # Authentication
-# https://docs.djangoproject.com/en/4.1/topics/auth/
+# https://docs.djangoproject.com/en/4.2/topics/auth/
 
 AUTH_USER_MODEL = "account.User"
 
@@ -288,7 +288,7 @@ AUTHENTICATION_BACKENDS = [
 
 
 # Templates
-# https://docs.djangoproject.com/en/4.1/topics/templates/
+# https://docs.djangoproject.com/en/4.2/topics/templates/
 
 TEMPLATES = [
     {
@@ -308,7 +308,7 @@ TEMPLATES = [
 
 
 # Password validation
-# https://docs.djangoproject.com/en/4.1/ref/settings/#auth-password-validators
+# https://docs.djangoproject.com/en/4.2/ref/settings/#auth-password-validators
 
 AUTH_PASSWORD_VALIDATORS = [
     {
@@ -327,7 +327,7 @@ AUTH_PASSWORD_VALIDATORS = [
 
 
 # Internationalization
-# https://docs.djangoproject.com/en/4.1/topics/i18n/
+# https://docs.djangoproject.com/en/4.2/topics/i18n/
 
 LANGUAGE_CODE = "en-us"
 
@@ -339,43 +339,54 @@ USE_TZ = True
 
 
 # Storage
-# https://docs.djangoproject.com/en/4.1/ref/settings/#media-root
+# https://docs.djangoproject.com/en/4.2/ref/settings/#media-root
 
 MEDIA_URL = "media/"
 MEDIA_ROOT = os.path.join(BASE_DIR, "storage")
 
 
 # Static files (CSS, JavaScript, Images)
-# https://docs.djangoproject.com/en/4.1/howto/static-files/
+# https://docs.djangoproject.com/en/4.2/howto/static-files/
 
 STATIC_URL = "static/"
 STATIC_ROOT = os.path.join(BASE_DIR, "staticfiles")
 
 
 # Default primary key field type
-# https://docs.djangoproject.com/en/4.1/ref/settings/#default-auto-field
+# https://docs.djangoproject.com/en/4.2/ref/settings/#default-auto-field
 
 DEFAULT_AUTO_FIELD = "django.db.models.BigAutoField"
 
 
 # DATA_UPLOAD_MAX_MEMORY_SIZE
-# https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DATA_UPLOAD_MAX_MEMORY_SIZE
+# https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-DATA_UPLOAD_MAX_MEMORY_SIZE
 
 DATA_UPLOAD_MAX_MEMORY_SIZE = 26214400
 
 # FILE_UPLOAD_MAX_MEMORY_SIZE
-# https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-FILE_UPLOAD_MAX_MEMORY_SIZE
+# https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-FILE_UPLOAD_MAX_MEMORY_SIZE
 
 FILE_UPLOAD_MAX_MEMORY_SIZE = 26214400
 
 
 # DEFAULT_FILE_STORAGE
-# https://docs.djangoproject.com/en/4.1/ref/settings/#std-setting-DEFAULT_FILE_STORAGE
+# https://docs.djangoproject.com/en/4.2/ref/settings/#std-setting-DEFAULT_FILE_STORAGE
 
 if APP_ENV in ["dev", "staging", "prod"]:
-    DEFAULT_FILE_STORAGE = "storages.backends.s3boto3.S3Boto3Storage"
+    STORAGES = {
+        "default": {
+            "BACKEND": "storages.backends.s3boto3.S3Boto3Storage",
+        },
+    }
 else:
-    DEFAULT_FILE_STORAGE = "django.core.files.storage.FileSystemStorage"
+    STORAGES = {
+        "default": {
+            "BACKEND": "django.core.files.storage.FileSystemStorage",
+        },
+        "staticfiles": {
+            "BACKEND": "django.contrib.staticfiles.storage.StaticFilesStorage",
+        },
+    }
 
 
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
@@ -405,6 +416,6 @@ CAPTCHA = {
 
 
 # SILENCED_SYSTEM_CHECKS
-# https://docs.djangoproject.com/en/4.1/ref/settings/#silenced-system-checks
+# https://docs.djangoproject.com/en/4.2/ref/settings/#silenced-system-checks
 
 SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
