@@ -94,6 +94,7 @@ SHARED_APPS = (
     "rest_framework",
     "safedelete",
     "tenant",
+    "app.apps.MyAppConfig",
 )
 
 DATABASE_ROUTERS = ("django_tenants.routers.TenantSyncRouter",)
