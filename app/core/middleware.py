@@ -65,6 +65,10 @@ class HealthCheckMiddleware(MiddlewareMixin):
         client_ip, is_routable = get_client_ip(request)
         if is_routable and client_ip in self.ip_allowed:
             settings.DEBUG = True
+        else:
+            if settings.PLAYGROUND and settings.APP_ENV not in ("local", "playground"):
+                return HttpResponse("Unauthorized", status=401)
+            settings.DEBUG = False
 
         if request.method == "GET" and (
             request.path == "/" or request.path == "/healthz"
