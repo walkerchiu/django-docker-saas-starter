@@ -198,11 +198,11 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         password = input["password"]
 
         if not is_valid_email(old_email):
-            raise ValidationError("The old_email is invalid!")
+            raise ValidationError("The oldEmail is invalid!")
         elif not is_valid_email(new_email):
-            raise ValidationError("The new_email is invalid!")
+            raise ValidationError("The newEmail is invalid!")
         elif new_email in PROTECTED_EMAIL:
-            raise ValidationError("The new_email is being protected!")
+            raise ValidationError("The newEmail is being protected!")
 
         try:
             user = User.objects.get(email=old_email)
@@ -212,7 +212,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
             if not user.check_password(password):
                 raise ValidationError("The password is invalid!")
             elif User.objects.filter(email=new_email).exclude(id=user.id).exists():
-                raise ValidationError("The new_email is already in use!")
+                raise ValidationError("The newEmail is already in use!")
 
         if user.is_owner and old_email != new_email:
             user.email = new_email
