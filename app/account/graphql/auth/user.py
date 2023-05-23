@@ -178,6 +178,36 @@ class UpdateName(graphene.relay.ClientIDMutation):
         return UpdateEmail(success=True, user=user)
 
 
+class UpdatePassword(graphene.relay.ClientIDMutation):
+    class Input:
+        oldPassword = graphene.String(required=True)
+        newPassword = graphene.String(required=True)
+
+    success = graphene.Boolean()
+
+    @classmethod
+    @strip_input
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
+        old_password = input["oldPassword"]
+        new_password = input["newPassword"]
+
+        if old_password == new_password:
+            raise ValidationError(
+                "The newPassword cannot be the same as the oldPassword!"
+            )
+
+        user = info.context.user
+
+        if user.check_password(old_password):
+            user.set_password(new_password)
+            user.save()
+        else:
+            raise ValidationError("The oldPassword is invalid!")
+
+        return UpdatePassword(success=True)
+
+
 class UpdateUser(graphene.relay.ClientIDMutation):
     class Input:
         oldEmail = graphene.String(required=True)
@@ -244,4 +274,5 @@ class UserMutation(graphene.ObjectType):
     create_user = CreateUser.Field()
     update_email = UpdateEmail.Field()
     update_name = UpdateName.Field()
+    update_password = UpdatePassword.Field()
     update_user = UpdateUser.Field()
