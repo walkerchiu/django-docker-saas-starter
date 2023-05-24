@@ -102,6 +102,8 @@ class CreateUser(graphene.relay.ClientIDMutation):
             raise ValidationError("The email is being protected!")
         elif User.objects.filter(email=email).exists():
             raise ValidationError("The email is already in use!")
+        if len(password) < 8:
+            raise ValidationError("The password is too short!")
 
         user_service = UserService()
         result, user = user_service.create_user(
@@ -192,7 +194,9 @@ class UpdatePassword(graphene.relay.ClientIDMutation):
         old_password = input["oldPassword"]
         new_password = input["newPassword"]
 
-        if old_password == new_password:
+        if len(new_password) < 8:
+            raise ValidationError("The newPassword is too short!")
+        elif old_password == new_password:
             raise ValidationError(
                 "The newPassword cannot be the same as the oldPassword!"
             )
