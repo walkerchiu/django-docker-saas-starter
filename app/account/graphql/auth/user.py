@@ -12,7 +12,7 @@ from account.models import User
 from account.services.user_service import UserService
 from account.variables.protected_email import PROTECTED_EMAIL
 from core.decorators import google_captcha3, strip_input
-from core.utils import is_valid_email
+from core.utils import is_valid_email, is_valid_password
 from tenant.services.tenant_service import TenantService
 
 
@@ -102,8 +102,8 @@ class CreateUser(graphene.relay.ClientIDMutation):
             raise ValidationError("The email is being protected!")
         elif User.objects.filter(email=email).exists():
             raise ValidationError("The email is already in use!")
-        if len(password) < 8:
-            raise ValidationError("The password is too short!")
+        if not is_valid_password(value=password, min_length=8):
+            raise ValidationError("The password is invalid!")
 
         user_service = UserService()
         result, user = user_service.create_user(
@@ -194,8 +194,8 @@ class UpdatePassword(graphene.relay.ClientIDMutation):
         old_password = input["oldPassword"]
         new_password = input["newPassword"]
 
-        if len(new_password) < 8:
-            raise ValidationError("The newPassword is too short!")
+        if not is_valid_password(value=new_password, min_length=8):
+            raise ValidationError("The newPassword is invalid!")
         elif old_password == new_password:
             raise ValidationError(
                 "The newPassword cannot be the same as the oldPassword!"
