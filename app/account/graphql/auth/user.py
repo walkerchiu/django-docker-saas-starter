@@ -268,10 +268,6 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         return UpdateUser(success=True, user=user)
 
 
-class UserQuery(graphene.ObjectType):
-    pass
-
-
 class UserMutation(graphene.ObjectType):
     check_name_available = CheckNameAvailable.Field()
     check_email_available = CheckEmailAvailable.Field()
@@ -280,3 +276,7 @@ class UserMutation(graphene.ObjectType):
     update_name = UpdateName.Field()
     update_password = UpdatePassword.Field()
     update_user = UpdateUser.Field()
+
+
+class UserQuery(graphene.ObjectType):
+    pass

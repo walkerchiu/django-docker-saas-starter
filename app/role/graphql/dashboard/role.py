@@ -183,14 +183,14 @@ class UpdateRole(graphene.relay.ClientIDMutation):
         return UpdateRole(success=True, role=role)
 
 
+class RoleMutation(graphene.ObjectType):
+    create_role = CreateRole.Field()
+    delete_roles = DeleteRoles.Field()
+    update_role = UpdateRole.Field()
+
+
 class RoleQuery(graphene.ObjectType):
     role = graphene.relay.Node.Field(RoleNode)
     roles = DjangoFilterConnectionField(
         RoleNode, orderBy=graphene.List(of_type=graphene.String)
     )
-
-
-class RoleMutation(graphene.ObjectType):
-    create_role = CreateRole.Field()
-    delete_roles = DeleteRoles.Field()
-    update_role = UpdateRole.Field()

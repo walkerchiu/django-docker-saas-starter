@@ -14,6 +14,15 @@ from tenant.graphql.schema_dashboard import (
 )
 
 
+class Mutation(
+    AccountMutation,
+    RoleMutation,
+    TenantMutation,
+    graphene.ObjectType,
+):
+    pass
+
+
 class Query(
     AccountQuery,
     RoleQuery,
@@ -25,15 +34,6 @@ class Query(
     @login_required
     def resolve_viewer(self, info: ResolveInfo, **kwargs):
         return info.context.user
-
-
-class Mutation(
-    AccountMutation,
-    RoleMutation,
-    TenantMutation,
-    graphene.ObjectType,
-):
-    pass
 
 
 schema = graphene.Schema(mutation=Mutation, query=Query)

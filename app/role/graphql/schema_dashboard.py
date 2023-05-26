@@ -4,17 +4,17 @@ from role.graphql.dashboard.permission import PermissionMutation, PermissionQuer
 from role.graphql.dashboard.role import RoleMutation, RoleQuery
 
 
-class Query(
-    PermissionQuery,
-    RoleQuery,
+class Mutation(
+    PermissionMutation,
+    RoleMutation,
     graphene.ObjectType,
 ):
     pass
 
 
-class Mutation(
-    PermissionMutation,
-    RoleMutation,
+class Query(
+    PermissionQuery,
+    RoleQuery,
     graphene.ObjectType,
 ):
     pass

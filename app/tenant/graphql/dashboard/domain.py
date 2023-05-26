@@ -173,14 +173,14 @@ class UpdateDomain(graphene.relay.ClientIDMutation):
         return UpdateDomain(success=True, domain=domain)
 
 
+class DomainMutation(graphene.ObjectType):
+    create_domain = CreateDomain.Field()
+    delete_domains = DeleteDomains.Field()
+    update_domain = UpdateDomain.Field()
+
+
 class DomainQuery(graphene.ObjectType):
     domain = graphene.relay.Node.Field(DomainNode)
     domains = DjangoFilterConnectionField(
         DomainNode, orderBy=graphene.List(of_type=graphene.String)
     )
-
-
-class DomainMutation(graphene.ObjectType):
-    create_domain = CreateDomain.Field()
-    delete_domains = DeleteDomains.Field()
-    update_domain = UpdateDomain.Field()

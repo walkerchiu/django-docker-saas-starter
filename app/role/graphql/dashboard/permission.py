@@ -187,14 +187,14 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
         return UpdatePermission(success=True, permission=permission)
 
 
+class PermissionMutation(graphene.ObjectType):
+    create_permission = CreatePermission.Field()
+    delete_permissions = DeletePermissions.Field()
+    update_permission = UpdatePermission.Field()
+
+
 class PermissionQuery(graphene.ObjectType):
     permission = graphene.relay.Node.Field(PermissionNode)
     permissions = DjangoFilterConnectionField(
         PermissionNode, orderBy=graphene.List(of_type=graphene.String)
     )
-
-
-class PermissionMutation(graphene.ObjectType):
-    create_permission = CreatePermission.Field()
-    delete_permissions = DeletePermissions.Field()
-    update_permission = UpdatePermission.Field()
