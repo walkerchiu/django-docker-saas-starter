@@ -72,7 +72,7 @@ class CreatePermission(graphene.relay.ClientIDMutation):
         return CreatePermission(success=True, permission=permission)
 
 
-class DeletePermissions(graphene.relay.ClientIDMutation):
+class DeletePermissionBatch(graphene.relay.ClientIDMutation):
     class Input:
         ids = graphene.List(graphene.ID, required=True)
 
@@ -110,7 +110,7 @@ class DeletePermissions(graphene.relay.ClientIDMutation):
             except Permission.DoesNotExist:
                 warnings["not_found"].append(id)
 
-        return DeletePermissions(success=True, warnings=warnings)
+        return DeletePermissionBatch(success=True, warnings=warnings)
 
 
 class UpdatePermission(graphene.relay.ClientIDMutation):
@@ -188,9 +188,9 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
 
 
 class PermissionMutation(graphene.ObjectType):
-    create_permission = CreatePermission.Field()
-    delete_permissions = DeletePermissions.Field()
-    update_permission = UpdatePermission.Field()
+    permission_create = CreatePermission.Field()
+    permission_delete_batch = DeletePermissionBatch.Field()
+    permission_update = UpdatePermission.Field()
 
 
 class PermissionQuery(graphene.ObjectType):

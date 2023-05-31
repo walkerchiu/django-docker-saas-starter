@@ -6,7 +6,7 @@ from django_filters import (
     OrderingFilter,
 )
 from graphene import ResolveInfo
-from graphene_django import DjangoObjectType, DjangoListField
+from graphene_django import DjangoListField, DjangoObjectType
 import graphene
 
 from core.relay.connection import ExtendedConnection

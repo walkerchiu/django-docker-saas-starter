@@ -61,7 +61,7 @@ class CreateDomain(graphene.relay.ClientIDMutation):
         return CreateDomain(success=True, domain=domain)
 
 
-class DeleteDomains(graphene.relay.ClientIDMutation):
+class DeleteDomainBatch(graphene.relay.ClientIDMutation):
     class Input:
         tenantId = graphene.ID(required=True)
         ids = graphene.List(graphene.ID, required=True)
@@ -114,7 +114,7 @@ class DeleteDomains(graphene.relay.ClientIDMutation):
                 except Domain.DoesNotExist:
                     warnings["not_found"].append(id)
 
-        return DeleteDomains(success=True, warnings=warnings)
+        return DeleteDomainBatch(success=True, warnings=warnings)
 
 
 class UpdateDomain(graphene.relay.ClientIDMutation):
@@ -174,9 +174,9 @@ class UpdateDomain(graphene.relay.ClientIDMutation):
 
 
 class DomainMutation(graphene.ObjectType):
-    create_domain = CreateDomain.Field()
-    delete_domains = DeleteDomains.Field()
-    update_domain = UpdateDomain.Field()
+    domain_create = CreateDomain.Field()
+    domain_delete_batch = DeleteDomainBatch.Field()
+    domain_update = UpdateDomain.Field()
 
 
 class DomainQuery(graphene.ObjectType):

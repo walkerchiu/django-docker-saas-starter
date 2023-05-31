@@ -70,7 +70,7 @@ class CreateRole(graphene.relay.ClientIDMutation):
         return CreateRole(success=True, role=role)
 
 
-class DeleteRoles(graphene.relay.ClientIDMutation):
+class DeleteRoleBatch(graphene.relay.ClientIDMutation):
     class Input:
         ids = graphene.List(graphene.ID, required=True)
 
@@ -106,7 +106,7 @@ class DeleteRoles(graphene.relay.ClientIDMutation):
             except Role.DoesNotExist:
                 warnings["not_found"].append(id)
 
-        return DeleteRoles(success=True, warnings=warnings)
+        return DeleteRoleBatch(success=True, warnings=warnings)
 
 
 class UpdateRole(graphene.relay.ClientIDMutation):
@@ -184,9 +184,9 @@ class UpdateRole(graphene.relay.ClientIDMutation):
 
 
 class RoleMutation(graphene.ObjectType):
-    create_role = CreateRole.Field()
-    delete_roles = DeleteRoles.Field()
-    update_role = UpdateRole.Field()
+    role_create = CreateRole.Field()
+    role_delete_batch = DeleteRoleBatch.Field()
+    role_update = UpdateRole.Field()
 
 
 class RoleQuery(graphene.ObjectType):

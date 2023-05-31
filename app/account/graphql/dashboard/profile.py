@@ -39,7 +39,7 @@ class UpdateProfile(graphene.relay.ClientIDMutation):
 
 
 class ProfileMutation(graphene.ObjectType):
-    update_profile = UpdateProfile.Field()
+    profile_update = UpdateProfile.Field()
 
 
 class ProfileQuery(graphene.ObjectType):

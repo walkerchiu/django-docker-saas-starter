@@ -269,13 +269,13 @@ class UpdateUser(graphene.relay.ClientIDMutation):
 
 
 class UserMutation(graphene.ObjectType):
-    check_name_available = CheckNameAvailable.Field()
-    check_email_available = CheckEmailAvailable.Field()
-    create_user = CreateUser.Field()
-    update_email = UpdateEmail.Field()
-    update_name = UpdateName.Field()
-    update_password = UpdatePassword.Field()
-    update_user = UpdateUser.Field()
+    email_available_check = CheckEmailAvailable.Field()
+    email_update = UpdateEmail.Field()
+    name_available_check = CheckNameAvailable.Field()
+    name_update = UpdateName.Field()
+    password_update = UpdatePassword.Field()
+    user_create = CreateUser.Field()
+    user_update = UpdateUser.Field()
 
 
 class UserQuery(graphene.ObjectType):
