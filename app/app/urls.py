@@ -19,6 +19,7 @@ from django.urls import path
 
 from app.schemas.schema_auth import schema as schema_auth
 from app.schemas.schema_dashboard import schema as schema_dashboard
+from app.schemas.schema_website import schema as schema_website
 from app.views_api import version
 from core.views import ErrorGraphQLView
 
@@ -38,6 +39,13 @@ urlpatterns = [
         ErrorGraphQLView.as_view(
             graphiql=settings.PLAYGROUND,
             schema=schema_dashboard,
+        ),
+    ),
+    path(
+        "website/graphql",
+        ErrorGraphQLView.as_view(
+            graphiql=settings.PLAYGROUND,
+            schema=schema_website,
         ),
     ),
 ]

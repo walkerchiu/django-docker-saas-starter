@@ -217,7 +217,7 @@ else:
 # CORS
 # https://pypi.org/project/django-cors-headers/
 
-CORS_URLS_REGEX = r"^/(api|auth|dashboard)/.*$"
+CORS_URLS_REGEX = r"^/(api|auth|dashboard|website)/.*$"
 
 CORS_ALLOW_ALL_ORIGINS = False
 
