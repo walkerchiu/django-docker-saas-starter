@@ -1,6 +1,3 @@
-from django.conf import settings
-
-from django_tenants.utils import schema_context
 from graphene import ResolveInfo
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
@@ -8,7 +5,6 @@ import graphene
 
 from account.models import User
 from core.relay.connection import ExtendedConnection
-from tenant.models import Domain, Tenant
 
 
 class UserType(DjangoObjectType):
@@ -46,8 +42,6 @@ class UserNode(DjangoObjectType):
         interfaces = (graphene.relay.Node,)
         connection_class = ExtendedConnection
 
-    tenants = graphene.List(TenantsType)
-
     @classmethod
     @login_required
     def get_queryset(cls, queryset, info: ResolveInfo):
@@ -65,15 +59,3 @@ class UserNode(DjangoObjectType):
             return user
 
         raise Exception("Bad Request!")
-
-    @staticmethod
-    @login_required
-    def resolve_tenants(root: User, info: ResolveInfo):
-        with schema_context(settings.PUBLIC_SCHEMA_NAME):
-            tenants = []
-            email = info.context.user.email
-            records = Tenant.objects.filter(email=email)
-            for record in records:
-                domain = Domain.objects.get(tenant=record, is_primary=True)
-                tenants.append({"domain": domain.domain})
-        return tenants
