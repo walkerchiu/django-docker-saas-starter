@@ -7,6 +7,10 @@ from account.graphql.schema_dashboard import (
     Mutation as AccountMutation,
     Query as AccountQuery,
 )
+from organization.graphql.schema_dashboard import (
+    Mutation as OrganizationMutation,
+    Query as OrganizationQuery,
+)
 from role.graphql.schema_dashboard import Mutation as RoleMutation, Query as RoleQuery
 from tenant.graphql.schema_dashboard import (
     Mutation as TenantMutation,
@@ -16,6 +20,7 @@ from tenant.graphql.schema_dashboard import (
 
 class Mutation(
     AccountMutation,
+    OrganizationMutation,
     RoleMutation,
     TenantMutation,
     graphene.ObjectType,
@@ -25,6 +30,7 @@ class Mutation(
 
 class Query(
     AccountQuery,
+    OrganizationQuery,
     RoleQuery,
     TenantQuery,
     graphene.ObjectType,

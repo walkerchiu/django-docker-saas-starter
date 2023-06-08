@@ -7,6 +7,7 @@ from account.graphql.schema_website import (
     Query as AccountQuery,
 )
 from account.graphql.website.types.user import UserNode
+from organization.graphql.schema_dashboard import Query as OrganizationQuery
 
 
 class Mutation(
@@ -18,6 +19,7 @@ class Mutation(
 
 class Query(
     AccountQuery,
+    OrganizationQuery,
     graphene.ObjectType,
 ):
     viewer = graphene.Field(UserNode)
