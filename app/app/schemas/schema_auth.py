@@ -2,10 +2,12 @@ import graphene
 
 from account.graphql.schema_auth import Mutation as AccountMutation
 from core.graphql_jwt.relay import ObtainJSONWebToken, Refresh, Revoke, Verify
+from tenant.graphql.schema_auth import Mutation as TenantMutation, Query as TenantQuery
 
 
 class Mutation(
     AccountMutation,
+    TenantMutation,
     graphene.ObjectType,
 ):
     refresh_token = Refresh.Field()
@@ -15,6 +17,7 @@ class Mutation(
 
 
 class Query(
+    TenantQuery,
     graphene.ObjectType,
 ):
     pass
