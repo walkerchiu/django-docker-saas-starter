@@ -38,6 +38,10 @@ class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
         return str(self.id)
 
     @property
+    def is_hq_user(self) -> bool:
+        return self.roles.filter(slug=ProtectedRole.HQUser).exists()
+
+    @property
     def is_admin(self) -> bool:
         return self.roles.filter(slug=ProtectedRole.Admin).exists()
 

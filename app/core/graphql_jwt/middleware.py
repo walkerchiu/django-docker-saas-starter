@@ -82,8 +82,13 @@ class JSONWebTokenMiddleware:
 
         if not settings.PLAYGROUND:
             endpoint = info.context.path.split("/")[1]
-            if endpoint in ("dashboard"):
+            if endpoint in ("dashboard", "hq"):
                 if user is None:
                     raise Exception("The token is invalid!")
+                elif not user.is_staff:
+                    raise Exception("This operation is not allowed!")
+                elif endpoint == "hq":
+                    if not user.is_hq_user:
+                        raise Exception("This operation is not allowed!")
 
         return next(root, info, **kwargs)

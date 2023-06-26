@@ -9,8 +9,8 @@ from graphene_django import DjangoConnectionField, DjangoObjectType
 import graphene
 
 from core.relay.connection import ExtendedConnection
-from tenant.graphql.dashboard.types.contract import ContractNode
-from tenant.graphql.dashboard.types.domain import DomainNode
+from tenant.graphql.hq.types.contract import ContractNode
+from tenant.graphql.hq.types.domain import DomainNode
 from tenant.models import Tenant
 
 
@@ -72,7 +72,7 @@ class TenantNode(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info: ResolveInfo):
-        raise Exception("This operation is not allowed!")
+        return queryset
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):

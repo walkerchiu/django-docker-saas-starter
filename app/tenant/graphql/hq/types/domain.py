@@ -1,30 +1,33 @@
 from django_filters import (
+    BooleanFilter,
     CharFilter,
     DateTimeFilter,
     FilterSet,
     OrderingFilter,
 )
 from graphene import ResolveInfo
-from graphene_django import DjangoConnectionField, DjangoObjectType
+from graphene_django import DjangoObjectType
 import graphene
 
 from core.relay.connection import ExtendedConnection
-from tenant.graphql.dashboard.types.contract import ContractNode
-from tenant.graphql.dashboard.types.domain import DomainNode
-from tenant.models import Tenant
+from tenant.models import Domain
 
 
-class TenantType(DjangoObjectType):
+class DomainType(DjangoObjectType):
     class Meta:
-        model = Tenant
+        model = Domain
         fields = (
             "id",
-            "email",
+            "domain",
+            "is_builtin",
+            "is_primary",
         )
 
 
-class TenantFilter(FilterSet):
-    email = CharFilter(field_name="email", lookup_expr="exact")
+class DomainFilter(FilterSet):
+    domain = CharFilter(field_name="domain", lookup_expr="exact")
+    is_builtin = BooleanFilter(field_name="is_builtin")
+    is_primary = BooleanFilter(field_name="is_primary")
     created_at_gt = DateTimeFilter(field_name="created_at", lookup_expr="gt")
     created_at_gte = DateTimeFilter(field_name="created_at", lookup_expr="gte")
     created_at_lt = DateTimeFilter(field_name="created_at", lookup_expr="lt")
@@ -35,58 +38,43 @@ class TenantFilter(FilterSet):
     updated_at_lte = DateTimeFilter(field_name="updated_at", lookup_expr="lte")
 
     class Meta:
-        model = Tenant
+        model = Domain
         fields = []
 
     order_by = OrderingFilter(
         fields=(
-            "email",
+            "domain",
             "created_at",
             "updated_at",
         )
     )
 
 
-class TenantConnection(graphene.relay.Connection):
+class DomainConnection(graphene.relay.Connection):
     class Meta:
-        node = TenantType
+        node = DomainType
 
 
-class TenantNode(DjangoObjectType):
+class DomainNode(DjangoObjectType):
     class Meta:
-        model = Tenant
+        model = Domain
         exclude = (
             "deleted",
             "deleted_by_cascade",
         )
-        filterset_class = TenantFilter
+        filterset_class = DomainFilter
         interfaces = (graphene.relay.Node,)
         connection_class = ExtendedConnection
 
-    contract_set = DjangoConnectionField(
-        ContractNode, orderBy=graphene.List(of_type=graphene.String)
-    )
-    domain_set = DjangoConnectionField(
-        DomainNode, orderBy=graphene.List(of_type=graphene.String)
-    )
-
     @classmethod
     def get_queryset(cls, queryset, info: ResolveInfo):
-        raise Exception("This operation is not allowed!")
+        return queryset
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):
         try:
-            tenant = cls._meta.model.objects.get(pk=id)
+            domain = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
             raise Exception("Bad Request!")
 
-        return tenant
-
-    @staticmethod
-    def resolve_contractSet(root: Tenant, info: ResolveInfo, **kwargs):
-        return info.context.loaders.contracts_by_tenant_loader.load(root.id)
-
-    @staticmethod
-    def resolve_domainSet(root: Tenant, info: ResolveInfo, **kwargs):
-        return info.context.loaders.domains_by_tenant_loader.load(root.id)
+        return domain
