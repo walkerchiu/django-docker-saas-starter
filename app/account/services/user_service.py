@@ -6,11 +6,11 @@ from account.models import Profile, User
 
 class UserService:
     def create_user(
-        self, email: str, password: str, name: str = ""
+        self, email: str, password: str, username: str = ""
     ) -> Tuple[bool, User]:
         user = User(
             email=email,
-            name=name,
+            username=username,
         )
         user.set_password(password)
         user.save()

@@ -13,7 +13,7 @@ class UserType(DjangoObjectType):
         fields = (
             "id",
             "email",
-            "name",
+            "username",
         )
 
 
@@ -32,7 +32,7 @@ class UserNode(DjangoObjectType):
         filter_fields = {
             "id": ["exact"],
             "email": ["iexact", "icontains", "istartswith"],
-            "name": ["iexact", "icontains", "istartswith"],
+            "username": ["iexact", "icontains", "istartswith"],
         }
         exclude = (
             "deleted",

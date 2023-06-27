@@ -31,7 +31,7 @@ class OrganizationService:
             result, user = user_service.create_user(
                 email=email,
                 password=password,
-                name="demo",
+                username="demo",
             )
 
             if result:

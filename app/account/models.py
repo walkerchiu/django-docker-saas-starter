@@ -20,7 +20,7 @@ class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
     email = models.EmailField(
         verbose_name="email address", max_length=255, unique=True, db_index=True
     )
-    name = models.CharField(max_length=255, db_index=True)
+    username = models.CharField(max_length=255, db_index=True)
     email_verified = models.BooleanField(default=False)
     roles = models.ManyToManyField(Role)
 

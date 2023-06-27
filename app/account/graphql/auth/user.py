@@ -50,9 +50,9 @@ class CheckEmailAvailable(graphene.relay.ClientIDMutation):
         return CheckEmailAvailable(success=True)
 
 
-class CheckNameAvailable(graphene.relay.ClientIDMutation):
+class CheckUsernameAvailable(graphene.relay.ClientIDMutation):
     class Input:
-        name = graphene.String(required=True)
+        username = graphene.String(required=True)
         captcha = graphene.String(
             required=settings.CAPTCHA["google_recaptcha3"]["enabled"]
         )
@@ -64,16 +64,20 @@ class CheckNameAvailable(graphene.relay.ClientIDMutation):
     @google_captcha3("auth")
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        name = input["name"]
+        username = input["username"]
 
         if info.context.user.is_authenticated:
-            if User.objects.filter(name=name).exclude(id=info.context.user.id).exists():
-                raise ValidationError("The name is already in use!")
+            if (
+                User.objects.filter(username=username)
+                .exclude(id=info.context.user.id)
+                .exists()
+            ):
+                raise ValidationError("The username is already in use!")
         else:
-            if User.objects.filter(name=name).exists():
-                raise ValidationError("The name is already in use!")
+            if User.objects.filter(username=username).exists():
+                raise ValidationError("The username is already in use!")
 
-        return CheckNameAvailable(success=True)
+        return CheckUsernameAvailable(success=True)
 
 
 class UpdateEmail(graphene.relay.ClientIDMutation):
@@ -114,31 +118,6 @@ class UpdateEmail(graphene.relay.ClientIDMutation):
         return UpdateEmail(success=True, user=user)
 
 
-class UpdateName(graphene.relay.ClientIDMutation):
-    class Input:
-        name = graphene.String(required=True)
-
-    success = graphene.Boolean()
-    user = graphene.Field(UserNode)
-
-    @classmethod
-    @login_required
-    @strip_input
-    @transaction.atomic
-    def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        name = input["name"]
-
-        user = info.context.user
-
-        if User.objects.filter(name=name).exclude(id=user.id).exists():
-            raise ValidationError("The email is already in use!")
-
-        user.name = name
-        user.save()
-
-        return UpdateEmail(success=True, user=user)
-
-
 class UpdatePassword(graphene.relay.ClientIDMutation):
     class Input:
         oldPassword = graphene.String(required=True)
@@ -175,7 +154,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
     class Input:
         oldEmail = graphene.String(required=True)
         newEmail = graphene.String(required=True)
-        name = graphene.String(required=True)
+        username = graphene.String(required=True)
         password = graphene.String(required=True)
 
     success = graphene.Boolean()
@@ -187,7 +166,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         old_email = input["oldEmail"]
         new_email = input["newEmail"]
-        name = input["name"]
+        username = input["username"]
         password = input["password"]
 
         if not is_valid_email(old_email):
@@ -210,7 +189,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         if user.is_owner and old_email != new_email:
             user.email = new_email
 
-        user.name = name
+        user.username = username
         user.save()
 
         if user.is_owner and user.email != old_email:
@@ -221,19 +200,44 @@ class UpdateUser(graphene.relay.ClientIDMutation):
                     email_new=new_email,
                 )
 
-        user.name = name
+        user.username = username
         user.save()
 
         return UpdateUser(success=True, user=user)
 
 
+class UpdateUsername(graphene.relay.ClientIDMutation):
+    class Input:
+        username = graphene.String(required=True)
+
+    success = graphene.Boolean()
+    user = graphene.Field(UserNode)
+
+    @classmethod
+    @login_required
+    @strip_input
+    @transaction.atomic
+    def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
+        username = input["username"]
+
+        user = info.context.user
+
+        if User.objects.filter(username=username).exclude(id=user.id).exists():
+            raise ValidationError("The email is already in use!")
+
+        user.username = username
+        user.save()
+
+        return UpdateEmail(success=True, user=user)
+
+
 class UserMutation(graphene.ObjectType):
     email_available_check = CheckEmailAvailable.Field()
     email_update = UpdateEmail.Field()
-    name_available_check = CheckNameAvailable.Field()
-    name_update = UpdateName.Field()
     password_update = UpdatePassword.Field()
     user_update = UpdateUser.Field()
+    username_available_check = CheckUsernameAvailable.Field()
+    username_update = UpdateUsername.Field()
 
 
 class UserQuery(graphene.ObjectType):
