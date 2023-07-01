@@ -30,6 +30,10 @@ class CheckEmailAvailable(graphene.relay.ClientIDMutation):
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         email = input["email"]
+        endpoint = info.context.headers.get("x-endpoint")
+
+        if endpoint not in ("hq", "dashboard", "website"):
+            raise Exception("Bad Request!")
 
         if not is_valid_email(email):
             raise ValidationError("The email is invalid!")
@@ -38,13 +42,13 @@ class CheckEmailAvailable(graphene.relay.ClientIDMutation):
 
         if info.context.user.is_authenticated:
             if (
-                User.objects.filter(email=email)
+                User.objects.filter(endpoint=endpoint, email=email)
                 .exclude(id=info.context.user.id)
                 .exists()
             ):
                 raise ValidationError("The email is already in use!")
         else:
-            if User.objects.filter(email=email).exists():
+            if User.objects.filter(endpoint=endpoint, email=email).exists():
                 raise ValidationError("The email is already in use!")
 
         return CheckEmailAvailable(success=True)
@@ -65,16 +69,20 @@ class CheckUsernameAvailable(graphene.relay.ClientIDMutation):
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         username = input["username"]
+        endpoint = info.context.headers.get("x-endpoint")
+
+        if endpoint not in ("hq", "dashboard", "website"):
+            raise Exception("Bad Request!")
 
         if info.context.user.is_authenticated:
             if (
-                User.objects.filter(username=username)
+                User.objects.filter(endpoint=endpoint, username=username)
                 .exclude(id=info.context.user.id)
                 .exists()
             ):
                 raise ValidationError("The username is already in use!")
         else:
-            if User.objects.filter(username=username).exists():
+            if User.objects.filter(endpoint=endpoint, username=username).exists():
                 raise ValidationError("The username is already in use!")
 
         return CheckUsernameAvailable(success=True)
@@ -93,6 +101,10 @@ class UpdateEmail(graphene.relay.ClientIDMutation):
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         email = input["email"]
+        endpoint = info.context.headers.get("x-endpoint")
+
+        if endpoint not in ("hq", "dashboard", "website"):
+            raise Exception("Bad Request!")
 
         user = info.context.user
 
@@ -100,7 +112,11 @@ class UpdateEmail(graphene.relay.ClientIDMutation):
             raise ValidationError("The email is invalid!")
         elif email in PROTECTED_EMAIL:
             raise ValidationError("The email is being protected!")
-        elif User.objects.filter(email=email).exclude(id=user.id).exists():
+        elif (
+            User.objects.filter(endpoint=endpoint, email=email)
+            .exclude(id=user.id)
+            .exists()
+        ):
             raise ValidationError("The email is already in use!")
 
         email_original = user.email
@@ -168,6 +184,10 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         new_email = input["newEmail"]
         username = input["username"]
         password = input["password"]
+        endpoint = info.context.headers.get("x-endpoint")
+
+        if endpoint not in ("hq", "dashboard", "website"):
+            raise Exception("Bad Request!")
 
         if not is_valid_email(old_email):
             raise ValidationError("The oldEmail is invalid!")
@@ -177,13 +197,17 @@ class UpdateUser(graphene.relay.ClientIDMutation):
             raise ValidationError("The newEmail is being protected!")
 
         try:
-            user = User.objects.get(email=old_email)
+            user = User.objects.get(endpoint=endpoint, email=old_email)
         except:
             raise Exception("Can not find this user!")
         else:
             if not user.check_password(password):
                 raise ValidationError("The password is invalid!")
-            elif User.objects.filter(email=new_email).exclude(id=user.id).exists():
+            elif (
+                User.objects.filter(endpoint=endpoint, email=new_email)
+                .exclude(id=user.id)
+                .exists()
+            ):
                 raise ValidationError("The newEmail is already in use!")
 
         if user.is_owner and old_email != new_email:
@@ -219,10 +243,18 @@ class UpdateUsername(graphene.relay.ClientIDMutation):
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         username = input["username"]
+        endpoint = info.context.headers.get("x-endpoint")
+
+        if endpoint not in ("hq", "dashboard", "website"):
+            raise Exception("Bad Request!")
 
         user = info.context.user
 
-        if User.objects.filter(username=username).exclude(id=user.id).exists():
+        if (
+            User.objects.filter(endpoint=endpoint, username=username)
+            .exclude(id=user.id)
+            .exists()
+        ):
             raise ValidationError("The email is already in use!")
 
         user.username = username

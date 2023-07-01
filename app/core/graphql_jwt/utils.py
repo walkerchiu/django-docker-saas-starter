@@ -16,6 +16,7 @@ def jwt_payload(user, context=None):
     jwt_expires = int(jwt_datetime.timestamp())
 
     payload = {}
+    payload["endpoint"] = str(user.endpoint)
     payload["email"] = str(user.email)
     payload["sub"] = to_global_id("User", user.id)
     payload["exp"] = jwt_expires
@@ -92,11 +93,10 @@ def get_payload(token, context=None):
     return payload
 
 
-def get_user_by_natural_key(username):
-    UserModel = get_user_model()
+def get_user_by_natural_key(endpoint: str, email: str):
     try:
-        return UserModel._default_manager.get_by_natural_key(username)
-    except UserModel.DoesNotExist:
+        return get_user_model().objects.get(endpoint=endpoint, email=email)
+    except get_user_model().DoesNotExist:
         return None
 
 
@@ -106,7 +106,9 @@ def get_user_by_payload(payload):
     if not username:
         raise exceptions.JSONWebTokenError(_("Invalid payload"))
 
-    user = jwt_settings.JWT_GET_USER_BY_NATURAL_KEY_HANDLER(username)
+    user = jwt_settings.JWT_GET_USER_BY_NATURAL_KEY_HANDLER(
+        endpoint=payload["endpoint"], email=username
+    )
 
     if user is not None and not getattr(user, "is_active", True):
         raise exceptions.JSONWebTokenError(_("User is disabled"))

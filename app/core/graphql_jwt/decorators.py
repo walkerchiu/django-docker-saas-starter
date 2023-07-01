@@ -2,7 +2,7 @@ from calendar import timegm
 from datetime import datetime
 from functools import wraps
 
-from django.contrib.auth import authenticate, get_user_model
+from django.contrib.auth import get_user_model
 from django.db import connection
 from django.middleware.csrf import rotate_token
 from django.utils.translation import gettext as _
@@ -14,6 +14,7 @@ from graphql_jwt.compat import GraphQLResolveInfo
 from graphql_jwt.settings import jwt_settings
 from graphql_jwt.utils import delete_cookie, set_cookie
 
+from account.backends import AuthBackend
 from account.models import User
 from account.signals import signin_fail, signin_success
 from core.decorators import google_captcha3
@@ -102,22 +103,32 @@ def token_auth(f):
         context = info.context
         context._jwt_token_auth = True
         schema_name = connection.schema_name
-        username = kwargs.get(get_user_model().USERNAME_FIELD)
+        email = kwargs.get(get_user_model().USERNAME_FIELD)
+        endpoint = info.context.headers.get("X-Endpoint")
+
+        if endpoint not in ("hq", "dashboard", "website"):
+            raise Exception("Bad Request!")
 
         with schema_context(schema_name):
-            user = authenticate(
+            user = AuthBackend().authenticate(
                 request=context,
-                username=username,
+                endpoint=endpoint,
+                email=email,
                 password=password,
             )
             if user is None:
-                user = User.objects.filter(email=username).first()
+                user = User.objects.filter(email=email).first()
                 if user:
                     signin_fail.send(sender="token_auth", info=info, user=user)
 
                 raise exceptions.JSONWebTokenError(
                     _("Please enter valid credentials"),
                 )
+
+            if endpoint == "hq" and not user.is_hq_user:
+                raise Exception("This operation is not allowed!")
+            elif endpoint == "dashboard" and not user.is_staff:
+                raise Exception("This operation is not allowed!")
 
             signin_success.send(sender="token_auth", info=info, user=user)
 

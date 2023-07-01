@@ -17,8 +17,9 @@ class UserManager(BaseUserManager):
 
 class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    endpoint = models.CharField(max_length=10, db_index=True, blank=True, null=True)
     email = models.EmailField(
-        verbose_name="email address", max_length=255, unique=True, db_index=True
+        verbose_name="email address", max_length=255, unique=False, db_index=True
     )
     username = models.CharField(max_length=255, db_index=True)
     email_verified = models.BooleanField(default=False)
@@ -32,6 +33,10 @@ class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
 
     class Meta:
         db_table = settings.APP_NAME + "_account_user"
+        index_together = (
+            ("endpoint", "email"),
+            ("endpoint", "username"),
+        )
         ordering = ["email"]
 
     def __str__(self):

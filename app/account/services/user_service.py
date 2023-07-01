@@ -6,9 +6,10 @@ from account.models import Profile, User
 
 class UserService:
     def create_user(
-        self, email: str, password: str, username: str = ""
+        self, endpoint: str, email: str, password: str, username: str = ""
     ) -> Tuple[bool, User]:
         user = User(
+            endpoint=endpoint,
             email=email,
             username=username,
         )

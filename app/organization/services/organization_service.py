@@ -29,6 +29,7 @@ class OrganizationService:
 
             user_service = UserService()
             result, user = user_service.create_user(
+                endpoint="dashboard",
                 email=email,
                 password=password,
                 username="demo",

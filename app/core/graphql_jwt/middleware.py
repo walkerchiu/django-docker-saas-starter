@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.contrib.auth import authenticate
 from django.contrib.auth.middleware import get_user
 from django.contrib.auth.models import AnonymousUser
 
@@ -7,6 +6,8 @@ from graphql_jwt.compat import get_operation_name
 from graphql_jwt.path import PathDict
 from graphql_jwt.settings import jwt_settings
 from graphql_jwt.utils import get_http_authorization, get_token_argument
+
+from core.graphql_jwt.backends import JSONWebTokenBackend
 
 __all__ = [
     "allow_any",
@@ -72,7 +73,7 @@ class JSONWebTokenMiddleware:
         if (
             _authenticate(context) or token_argument is not None
         ) and self.authenticate_context(info, **kwargs):
-            user = authenticate(request=context, **kwargs)
+            user = JSONWebTokenBackend().authenticate(request=context, **kwargs)
 
             if user is not None:
                 context.user = user

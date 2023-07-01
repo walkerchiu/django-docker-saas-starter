@@ -35,13 +35,14 @@ class CreateUser(graphene.relay.ClientIDMutation):
             raise ValidationError("The email is invalid!")
         elif email in PROTECTED_EMAIL:
             raise ValidationError("The email is being protected!")
-        elif User.objects.filter(email=email).exists():
+        elif User.objects.filter(endpoint="website", email=email).exists():
             raise ValidationError("The email is already in use!")
         if not is_valid_password(value=password, min_length=8):
             raise ValidationError("The password is invalid!")
 
         user_service = UserService()
         result, _ = user_service.create_user(
+            endpoint="website",
             email=email,
             password=password,
         )

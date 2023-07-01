@@ -233,6 +233,7 @@ CORS_ALLOW_METHODS = [
 ]
 
 CORS_ALLOW_HEADERS = list(default_headers) + [
+    "X-Endpoint",
     "X-Tenant",
 ]
 
@@ -284,6 +285,7 @@ GRAPHQL_JWT = {
     "JWT_EXPIRATION_DELTA": timedelta(
         minutes=int(os.environ["JWT_EXPIRATION_MINUTES"])
     ),
+    "JWT_GET_USER_BY_NATURAL_KEY_HANDLER": "core.graphql_jwt.utils.get_user_by_natural_key",
     "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
     "JWT_PAYLOAD_HANDLER": "core.graphql_jwt.utils.jwt_payload",
     "JWT_REFRESH_EXPIRATION_DELTA": timedelta(
@@ -302,7 +304,6 @@ AUTH_USER_MODEL = "account.User"
 
 AUTHENTICATION_BACKENDS = [
     "graphql_jwt.backends.JSONWebTokenBackend",
-    "django.contrib.auth.backends.ModelBackend",
 ]
 
 
