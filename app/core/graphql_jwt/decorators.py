@@ -15,7 +15,6 @@ from graphql_jwt.settings import jwt_settings
 from graphql_jwt.utils import delete_cookie, set_cookie
 
 from account.backends import AuthBackend
-from account.models import User
 from account.signals import signin_fail, signin_success
 from core.decorators import google_captcha3
 from core.graphql_jwt.refresh_token.shortcuts import (
@@ -117,7 +116,7 @@ def token_auth(f):
                 password=password,
             )
             if user is None:
-                user = User.objects.filter(email=email).first()
+                user = get_user_model().objects.filter(email=email).first()
                 if user:
                     signin_fail.send(sender="token_auth", info=info, user=user)
 
