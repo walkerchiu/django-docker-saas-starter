@@ -168,7 +168,7 @@ class UpdateRole(graphene.relay.ClientIDMutation):
                 role.published_at = publishedAt
                 role.save()
 
-                RoleTrans.objects.update_or_create(
+                role.translations.update_or_create(
                     role=role,
                     language_code=languageCode,
                     defaults={

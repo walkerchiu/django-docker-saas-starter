@@ -172,7 +172,7 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
                 permission.published_at = publishedAt
                 permission.save()
 
-                PermissionTrans.objects.update_or_create(
+                permission.translations.update_or_create(
                     permission=permission,
                     language_code=languageCode,
                     defaults={
