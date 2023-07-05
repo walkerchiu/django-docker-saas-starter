@@ -8,3 +8,7 @@ class TaskStatusType(graphene.ObjectType):
     in_use = graphene.List(graphene.String)
     not_found = graphene.List(graphene.String)
     wait_to_do = graphene.List(graphene.String)
+
+
+class TransTypeInput(graphene.InputObjectType):
+    language_code = graphene.String(required=True)
