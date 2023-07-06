@@ -7,21 +7,22 @@ from graphql_relay import from_global_id
 import graphene
 
 from core.decorators import strip_input
+from core.helpers.translation_helper import TranslationHelper
 from core.types import TaskStatusType
 from core.utils import is_slug_invalid
 from organization.models import Organization
-from role.graphql.hq.types.permission import PermissionNode
-from role.models import Permission, PermissionTrans
+from role.graphql.hq.types.permission import PermissionNode, PermissionTransInput
+from role.models import Permission
 
 
 class CreatePermission(graphene.relay.ClientIDMutation):
     class Input:
-        languageCode = graphene.String(required=True)
         slug = graphene.String(required=True)
-        name = graphene.String()
-        description = graphene.String()
         isPublished = graphene.Boolean()
         publishedAt = graphene.DateTime()
+        translations = graphene.List(
+            graphene.NonNull(PermissionTransInput), required=True
+        )
 
     success = graphene.Boolean()
     permission = graphene.Field(PermissionNode)
@@ -30,19 +31,20 @@ class CreatePermission(graphene.relay.ClientIDMutation):
     @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        languageCode = input["languageCode"]
         slug = input["slug"]
-        name = input["name"]
-        description = input["description"] if "description" in input else None
         isPublished = input["isPublished"] if "isPublished" in input else False
         publishedAt = input["publishedAt"] if "publishedAt" in input else None
+        translations = input["translations"]
 
-        if not languageCode:
-            raise ValidationError("The languageCode is invalid!")
+        translation_helper = TranslationHelper()
+        result, message = translation_helper.validate_translations_from_input(
+            label="permission", translations=translations, required=True
+        )
+        if not result:
+            raise ValidationError(message)
+
         if is_slug_invalid(slug):
             raise ValidationError("The slug is invalid!")
-        if not name:
-            raise ValidationError("The name is invalid!")
 
         organization = Organization.objects.only("id").get(
             schema_name=connection.schema_name
@@ -61,11 +63,12 @@ class CreatePermission(graphene.relay.ClientIDMutation):
                     is_published=isPublished,
                     published_at=publishedAt,
                 )
-                permission.translations.create(
-                    language_code=languageCode,
-                    name=name,
-                    description=description,
-                )
+                for translation in translations:
+                    permission.translations.create(
+                        language_code=translation["language_code"],
+                        name=translation["name"],
+                        description=translation["description"],
+                    )
             except Permission.DoesNotExist:
                 raise Exception("Can not find this permission!")
 
@@ -116,12 +119,12 @@ class DeletePermissionBatch(graphene.relay.ClientIDMutation):
 class UpdatePermission(graphene.relay.ClientIDMutation):
     class Input:
         id = graphene.ID(required=True)
-        languageCode = graphene.String(required=True)
         slug = graphene.String(required=True)
-        name = graphene.String()
-        description = graphene.String()
         isPublished = graphene.Boolean()
         publishedAt = graphene.DateTime()
+        translations = graphene.List(
+            graphene.NonNull(PermissionTransInput), required=True
+        )
 
     success = graphene.Boolean()
     permission = graphene.Field(PermissionNode)
@@ -131,21 +134,22 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         id = input["id"]
-        languageCode = input["languageCode"]
         slug = input["slug"]
-        name = input["name"]
-        description = input["description"] if "description" in input else None
         isPublished = input["isPublished"] if "isPublished" in input else False
         publishedAt = input["publishedAt"] if "publishedAt" in input else None
+        translations = input["translations"]
+
+        translation_helper = TranslationHelper()
+        result, message = translation_helper.validate_translations_from_input(
+            label="permission", translations=translations, required=True
+        )
+        if not result:
+            raise ValidationError(message)
 
         if not id:
             raise ValidationError("The id is invalid!")
-        if not languageCode:
-            raise ValidationError("The languageCode is invalid!")
         if is_slug_invalid(slug):
             raise ValidationError("The slug is invalid!")
-        if not name:
-            raise ValidationError("The name is invalid!")
 
         try:
             _, permission_id = from_global_id(id)
@@ -172,15 +176,14 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
                 permission.published_at = publishedAt
                 permission.save()
 
-                permission.translations.update_or_create(
-                    permission=permission,
-                    language_code=languageCode,
-                    defaults={
-                        "language_code": languageCode,
-                        "name": name,
-                        "description": description,
-                    },
-                )
+                for translation in translations:
+                    permission.translations.update_or_create(
+                        language_code=translation["language_code"],
+                        defaults={
+                            "name": translation["name"],
+                            "description": translation["description"],
+                        },
+                    )
             except Permission.DoesNotExist:
                 raise Exception("Can not find this permission!")
 

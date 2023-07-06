@@ -10,6 +10,7 @@ from graphene_django import DjangoListField, DjangoObjectType
 import graphene
 
 from core.relay.connection import ExtendedConnection
+from core.types import TransTypeInput
 from role.graphql.dashboard.types.permission import PermissionType
 from role.models import Role, RoleTrans
 

@@ -10,6 +10,7 @@ from graphene_django import DjangoListField, DjangoObjectType
 import graphene
 
 from core.relay.connection import ExtendedConnection
+from core.types import TransTypeInput
 from role.graphql.hq.types.permission import PermissionType
 from role.models import Role, RoleTrans
 
@@ -32,6 +33,11 @@ class RoleTransType(DjangoObjectType):
             "name",
             "description",
         )
+
+
+class RoleTransInput(TransTypeInput):
+    name = graphene.String()
+    description = graphene.String()
 
 
 class RoleFilter(FilterSet):

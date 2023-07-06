@@ -10,6 +10,7 @@ from graphene_django import DjangoListField, DjangoObjectType
 import graphene
 
 from core.relay.connection import ExtendedConnection
+from core.types import TransTypeInput
 from role.models import Permission, PermissionTrans
 
 
@@ -31,6 +32,11 @@ class PermissionTransType(DjangoObjectType):
             "name",
             "description",
         )
+
+
+class PermissionTransInput(TransTypeInput):
+    name = graphene.String()
+    description = graphene.String()
 
 
 class PermissionFilter(FilterSet):
