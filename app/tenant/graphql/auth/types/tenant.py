@@ -19,11 +19,6 @@ class RegisterTenantResponseType(graphene.ObjectType):
     payload = graphene.types.generic.GenericScalar()
 
 
-class TenantConnection(graphene.relay.Connection):
-    class Meta:
-        node = TenantType
-
-
 class TenantNode(DjangoObjectType):
     class Meta:
         model = Tenant
@@ -55,3 +50,8 @@ class TenantNode(DjangoObjectType):
             return tenant
 
         raise Exception("Bad Request!")
+
+
+class TenantConnection(graphene.relay.Connection):
+    class Meta:
+        node = TenantType

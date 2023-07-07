@@ -74,11 +74,6 @@ class RoleFilter(FilterSet):
     )
 
 
-class RoleConnection(graphene.relay.Connection):
-    class Meta:
-        node = RoleType
-
-
 class RoleNode(DjangoObjectType):
     class Meta:
         model = Role
@@ -116,3 +111,8 @@ class RoleNode(DjangoObjectType):
     @staticmethod
     def resolve_translations(root: Role, info: ResolveInfo):
         return root.translations
+
+
+class RoleConnection(graphene.relay.Connection):
+    class Meta:
+        node = RoleType

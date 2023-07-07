@@ -18,11 +18,6 @@ class ProfileType(DjangoObjectType):
         )
 
 
-class ProfileConnection(graphene.relay.Connection):
-    class Meta:
-        node = ProfileType
-
-
 class ProfileNode(DjangoObjectType):
     class Meta:
         model = Profile
@@ -52,3 +47,8 @@ class ProfileNode(DjangoObjectType):
             raise Exception("Bad Request!")
 
         return profile
+
+
+class ProfileConnection(graphene.relay.Connection):
+    class Meta:
+        node = ProfileType

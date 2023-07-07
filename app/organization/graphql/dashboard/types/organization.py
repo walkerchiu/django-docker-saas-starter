@@ -24,11 +24,6 @@ class OrganizationType(DjangoObjectType):
         )
 
 
-class OrganizationConnection(graphene.relay.Connection):
-    class Meta:
-        node = OrganizationType
-
-
 class OrganizationTransType(DjangoObjectType):
     class Meta:
         model = OrganizationTrans
@@ -106,3 +101,8 @@ class OrganizationNode(DjangoObjectType):
     @staticmethod
     def resolve_translations(root: Organization, info: ResolveInfo):
         return root.translations
+
+
+class OrganizationConnection(graphene.relay.Connection):
+    class Meta:
+        node = OrganizationType

@@ -73,11 +73,6 @@ class PermissionFilter(FilterSet):
     )
 
 
-class PermissionConnection(graphene.relay.Connection):
-    class Meta:
-        node = PermissionType
-
-
 class PermissionNode(DjangoObjectType):
     class Meta:
         model = Permission
@@ -114,3 +109,8 @@ class PermissionNode(DjangoObjectType):
     @staticmethod
     def resolve_translations(root: Permission, info: ResolveInfo):
         return root.translations
+
+
+class PermissionConnection(graphene.relay.Connection):
+    class Meta:
+        node = PermissionType

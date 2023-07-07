@@ -47,11 +47,6 @@ class TenantFilter(FilterSet):
     )
 
 
-class TenantConnection(graphene.relay.Connection):
-    class Meta:
-        node = TenantType
-
-
 class TenantNode(DjangoObjectType):
     class Meta:
         model = Tenant
@@ -90,3 +85,8 @@ class TenantNode(DjangoObjectType):
     @staticmethod
     def resolve_domainSet(root: Tenant, info: ResolveInfo, **kwargs):
         return info.context.loaders.domains_by_tenant_loader.load(root.id)
+
+
+class TenantConnection(graphene.relay.Connection):
+    class Meta:
+        node = TenantType

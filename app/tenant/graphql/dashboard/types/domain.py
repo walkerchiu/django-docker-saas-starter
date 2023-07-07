@@ -50,11 +50,6 @@ class DomainFilter(FilterSet):
     )
 
 
-class DomainConnection(graphene.relay.Connection):
-    class Meta:
-        node = DomainType
-
-
 class DomainNode(DjangoObjectType):
     class Meta:
         model = Domain
@@ -78,3 +73,8 @@ class DomainNode(DjangoObjectType):
             raise Exception("Bad Request!")
 
         return domain
+
+
+class DomainConnection(graphene.relay.Connection):
+    class Meta:
+        node = DomainType

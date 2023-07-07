@@ -19,11 +19,6 @@ class UserType(DjangoObjectType):
         )
 
 
-class UserConnection(graphene.relay.Connection):
-    class Meta:
-        node = UserType
-
-
 class TenantsType(graphene.ObjectType):
     domain = graphene.String()
 
@@ -58,3 +53,8 @@ class UserNode(DjangoObjectType):
             raise Exception("Bad Request!")
 
         return user
+
+
+class UserConnection(graphene.relay.Connection):
+    class Meta:
+        node = UserType

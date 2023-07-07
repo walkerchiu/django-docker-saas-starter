@@ -35,6 +35,11 @@ class RoleTransType(DjangoObjectType):
         )
 
 
+class RoleTransInput(TransTypeInput):
+    name = graphene.String()
+    description = graphene.String()
+
+
 class RoleFilter(FilterSet):
     slug = CharFilter(field_name="slug", lookup_expr="exact")
     language_code = CharFilter(
@@ -67,11 +72,6 @@ class RoleFilter(FilterSet):
             "updated_at",
         )
     )
-
-
-class RoleConnection(graphene.relay.Connection):
-    class Meta:
-        node = RoleType
 
 
 class RoleNode(DjangoObjectType):
@@ -111,3 +111,8 @@ class RoleNode(DjangoObjectType):
     @staticmethod
     def resolve_translations(root: Role, info: ResolveInfo):
         return root.translations
+
+
+class RoleConnection(graphene.relay.Connection):
+    class Meta:
+        node = RoleType

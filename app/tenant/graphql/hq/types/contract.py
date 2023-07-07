@@ -56,11 +56,6 @@ class ContractFilter(FilterSet):
     )
 
 
-class ContractConnection(graphene.relay.Connection):
-    class Meta:
-        node = ContractType
-
-
 class ContractNode(DjangoObjectType):
     class Meta:
         model = Contract
@@ -84,3 +79,8 @@ class ContractNode(DjangoObjectType):
             raise Exception("Bad Request!")
 
         return contract
+
+
+class ContractConnection(graphene.relay.Connection):
+    class Meta:
+        node = ContractType

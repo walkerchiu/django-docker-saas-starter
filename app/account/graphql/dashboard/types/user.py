@@ -23,11 +23,6 @@ class UserType(DjangoObjectType):
         )
 
 
-class UserConnection(graphene.relay.Connection):
-    class Meta:
-        node = UserType
-
-
 class TenantsType(graphene.ObjectType):
     domain = graphene.String()
 
@@ -81,3 +76,8 @@ class UserNode(DjangoObjectType):
                 domain = Domain.objects.get(tenant=record, is_primary=True)
                 tenants.append({"domain": domain.domain})
         return tenants
+
+
+class UserConnection(graphene.relay.Connection):
+    class Meta:
+        node = UserType
