@@ -16,7 +16,7 @@ class TranslationHelper:
     def validate_translations_from_input(
         self, label: str, translations: list, required: bool = True
     ) -> Tuple[bool, str]:
-        has_default_language = False
+        missing_data_in_default_language = True
 
         if required and (translations is None or len(translations) == 0):
             return False, str(label) + ": The translations is required!"
@@ -29,9 +29,9 @@ class TranslationHelper:
                     + f": The languageCode of the translation at index {index} is invalid!",
                 )
             if translation["language_code"] == self.language_code:
-                has_default_language = True
+                missing_data_in_default_language = False
 
-        if not has_default_language:
+        if missing_data_in_default_language:
             return (
                 False,
                 str(label)
