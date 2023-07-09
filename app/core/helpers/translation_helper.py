@@ -14,7 +14,11 @@ class TranslationHelper:
         self.language_support = self.organization.language_support
 
     def validate_translations_from_input(
-        self, label: str, translations: list, required: bool = True
+        self,
+        label: str,
+        translations: list,
+        required: bool = True,
+        default_language_required: bool = False,
     ) -> Tuple[bool, str]:
         missing_data_in_default_language = True
 
@@ -31,7 +35,7 @@ class TranslationHelper:
             if translation["language_code"] == self.language_code:
                 missing_data_in_default_language = False
 
-        if missing_data_in_default_language:
+        if default_language_required and missing_data_in_default_language:
             return (
                 False,
                 str(label)

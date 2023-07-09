@@ -38,7 +38,10 @@ class CreatePermission(graphene.relay.ClientIDMutation):
 
         translation_helper = TranslationHelper()
         result, message = translation_helper.validate_translations_from_input(
-            label="permission", translations=translations, required=True
+            label="permission",
+            translations=translations,
+            required=True,
+            default_language_required=False,
         )
         if not result:
             raise ValidationError(message)
@@ -141,7 +144,10 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
 
         translation_helper = TranslationHelper()
         result, message = translation_helper.validate_translations_from_input(
-            label="permission", translations=translations, required=True
+            label="permission",
+            translations=translations,
+            required=True,
+            default_language_required=False,
         )
         if not result:
             raise ValidationError(message)
