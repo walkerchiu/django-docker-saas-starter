@@ -10,6 +10,7 @@ from graphql_jwt.decorators import login_required
 import graphene
 
 from core.relay.connection import ExtendedConnection
+from core.types import TransTypeInput
 from organization.models import Organization, OrganizationTrans
 
 
@@ -32,6 +33,11 @@ class OrganizationTransType(DjangoObjectType):
             "name",
             "description",
         )
+
+
+class OrganizationTransInput(TransTypeInput):
+    name = graphene.String()
+    description = graphene.String()
 
 
 class OrganizationFilter(FilterSet):
