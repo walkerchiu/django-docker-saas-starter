@@ -34,10 +34,7 @@ class UserNode(DjangoObjectType):
             "email": ["iexact", "icontains", "istartswith"],
             "username": ["iexact", "icontains", "istartswith"],
         }
-        exclude = (
-            "deleted",
-            "deleted_by_cascade",
-        )
+        exclude = ("deleted_by_cascade",)
         order_by_field = "email"
         interfaces = (graphene.relay.Node,)
         connection_class = ExtendedConnection

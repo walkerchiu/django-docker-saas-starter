@@ -25,10 +25,7 @@ class ProfileNode(DjangoObjectType):
             "name": ["iexact", "icontains", "istartswith"],
             "mobile": ["icontains", "istartswith"],
         }
-        exclude = (
-            "deleted",
-            "deleted_by_cascade",
-        )
+        exclude = ("deleted_by_cascade",)
         order_by_field = "id"
         interfaces = (graphene.relay.Node,)
 

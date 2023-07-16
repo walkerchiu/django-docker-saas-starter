@@ -36,6 +36,10 @@ class DomainFilter(FilterSet):
     updated_at_gte = DateTimeFilter(field_name="updated_at", lookup_expr="gte")
     updated_at_lt = DateTimeFilter(field_name="updated_at", lookup_expr="lt")
     updated_at_lte = DateTimeFilter(field_name="updated_at", lookup_expr="lte")
+    deleted_gt = DateTimeFilter(field_name="deleted", lookup_expr="gt")
+    deleted_gte = DateTimeFilter(field_name="deleted", lookup_expr="gte")
+    deleted_lt = DateTimeFilter(field_name="deleted", lookup_expr="lt")
+    deleted_lte = DateTimeFilter(field_name="deleted", lookup_expr="lte")
 
     class Meta:
         model = Domain
@@ -46,6 +50,7 @@ class DomainFilter(FilterSet):
             "domain",
             "created_at",
             "updated_at",
+            "deleted",
         )
     )
 
@@ -53,10 +58,7 @@ class DomainFilter(FilterSet):
 class DomainNode(DjangoObjectType):
     class Meta:
         model = Domain
-        exclude = (
-            "deleted",
-            "deleted_by_cascade",
-        )
+        exclude = ("deleted_by_cascade",)
         filterset_class = DomainFilter
         interfaces = (graphene.relay.Node,)
         connection_class = ExtendedConnection

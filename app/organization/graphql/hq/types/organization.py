@@ -56,6 +56,10 @@ class OrganizationFilter(FilterSet):
     updated_at_gte = DateTimeFilter(field_name="updated_at", lookup_expr="gte")
     updated_at_lt = DateTimeFilter(field_name="updated_at", lookup_expr="lt")
     updated_at_lte = DateTimeFilter(field_name="updated_at", lookup_expr="lte")
+    deleted_gt = DateTimeFilter(field_name="deleted", lookup_expr="gt")
+    deleted_gte = DateTimeFilter(field_name="deleted", lookup_expr="gte")
+    deleted_lt = DateTimeFilter(field_name="deleted", lookup_expr="lt")
+    deleted_lte = DateTimeFilter(field_name="deleted", lookup_expr="lte")
 
     class Meta:
         model = Organization
@@ -66,6 +70,7 @@ class OrganizationFilter(FilterSet):
             ("translations__name", "name"),
             "created_at",
             "updated_at",
+            "deleted",
         )
     )
 
@@ -75,7 +80,6 @@ class OrganizationNode(DjangoObjectType):
         model = Organization
         exclude = (
             "schema_name",
-            "deleted",
             "deleted_by_cascade",
         )
         filterset_class = OrganizationFilter
