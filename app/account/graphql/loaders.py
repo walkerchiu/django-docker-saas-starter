@@ -21,8 +21,8 @@ def generate_loader_for_one_to_one(Type: DjangoObjectType, attr: str):
     class Loader(DataLoader):
         def batch_load_fn(self, keys: List[str]):
             def with_users(users: list):
-                user_ids = [user.id for user in users]
-                return ProfileByIdLoader().load_many(user_ids)
+                user_id_list = [user.id for user in users]
+                return ProfileByIdLoader().load_many(user_id_list)
 
             return UserByIdLoader().load_many(keys).then(with_users)
 

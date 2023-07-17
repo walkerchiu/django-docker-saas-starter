@@ -82,7 +82,7 @@ class CreateOrganization(graphene.relay.ClientIDMutation):
 
 class DeleteOrganizationBatch(graphene.relay.ClientIDMutation):
     class Input:
-        ids = graphene.List(graphene.ID, required=True)
+        idList = graphene.List(graphene.ID, required=True)
 
     success = graphene.Boolean()
     warnings = graphene.Field(TaskStatusType)
@@ -91,7 +91,7 @@ class DeleteOrganizationBatch(graphene.relay.ClientIDMutation):
     @strip_input
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
-        ids = input["ids"] if "ids" in input else []
+        id_list = input["idList"] if "idList" in input else []
 
         warnings = {
             "done": [],
@@ -102,7 +102,7 @@ class DeleteOrganizationBatch(graphene.relay.ClientIDMutation):
             "wait_to_do": [],
         }
 
-        for id in ids:
+        for id in id_list:
             try:
                 _, organization_id = from_global_id(id)
             except:

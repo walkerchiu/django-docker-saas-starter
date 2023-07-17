@@ -64,7 +64,7 @@ class CreateDomain(graphene.relay.ClientIDMutation):
 class DeleteDomainBatch(graphene.relay.ClientIDMutation):
     class Input:
         tenantId = graphene.ID(required=True)
-        ids = graphene.List(graphene.ID, required=True)
+        idList = graphene.List(graphene.ID, required=True)
 
     success = graphene.Boolean()
     warnings = graphene.Field(TaskStatusType)
@@ -75,7 +75,7 @@ class DeleteDomainBatch(graphene.relay.ClientIDMutation):
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         with schema_context(settings.PUBLIC_SCHEMA_NAME):
             tenantId = input["tenantId"]
-            ids = input["ids"] if "ids" in input else []
+            id_list = input["idList"] if "idList" in input else []
 
             try:
                 _, tenant_id = from_global_id(tenantId)
@@ -93,7 +93,7 @@ class DeleteDomainBatch(graphene.relay.ClientIDMutation):
                 "wait_to_do": [],
             }
 
-            for id in ids:
+            for id in id_list:
                 try:
                     _, domain_id = from_global_id(id)
                 except:
