@@ -8,11 +8,11 @@ class ContractHelper:
     def __init__(self, schema_name: str = connection.schema_name):
         self.schema_name = schema_name
 
-    def check_if_it_has_expired(
+    def check_if_it_is_within_the_validity_period(
         self,
     ) -> bool:
         return (
             Contract.objects.filter(tenant__schema_name=self.schema_name)
-            .filter(expired_on__gt=datetime.now())
+            .filter(effective_from__lt=datetime.now(), expired_on__gt=datetime.now())
             .exists()
         )

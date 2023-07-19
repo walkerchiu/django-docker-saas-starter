@@ -34,7 +34,8 @@ class Contract(CreateUpdateDateAndSafeDeleteMixin, PublishableModel):
     slug = models.CharField(max_length=32, unique=True, db_index=True)
     type = models.CharField(max_length=10, null=True)
     note = models.CharField(max_length=255, blank=True, null=True)
-    expired_on = models.DateField(null=True)
+    effective_from = models.DateTimeField(null=True)
+    expired_on = models.DateTimeField(null=True)
 
     _safedelete_policy = SOFT_DELETE_CASCADE
 
