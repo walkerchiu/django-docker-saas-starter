@@ -3,7 +3,10 @@ import requests
 
 from django.conf import settings
 from django.core.exceptions import ValidationError
+from django.db import connection
 from django.utils.translation import gettext as _
+
+from tenant.helpers.contract_helper import ContractHelper
 
 
 def google_captcha3(action):
@@ -49,6 +52,24 @@ def google_captcha3(action):
         return wrapper
 
     return decorator
+
+
+def within_validity_period(func):
+    @wraps(func)
+    def wrapper(self, *args, **input):
+        info = args[1]
+        endpoint = info.context.headers.get("X-Endpoint")
+
+        if endpoint != "hq":
+            contract_helper = ContractHelper(schema_name=connection.schema_name)
+            if not contract_helper.check_if_it_is_within_the_validity_period():
+                raise ValidationError("Not within the validity period!")
+
+        result = func(self, *args, **input)
+
+        return result
+
+    return wrapper
 
 
 def strip_input(func):
