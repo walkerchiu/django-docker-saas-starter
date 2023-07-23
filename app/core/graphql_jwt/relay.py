@@ -13,7 +13,7 @@ from graphql_jwt.refresh_token.signals import (
 from graphql_jwt.signals import token_issued, token_refreshed
 import graphene
 
-from core.decorators import google_captcha3
+from core.decorators import google_captcha3, within_validity_period
 from core.graphql_jwt import mixins
 from core.graphql_jwt.decorators import token_auth
 from core.graphql_jwt.refresh_token.relay import DeleteRefreshTokenCookie, Revoke
@@ -109,6 +109,7 @@ class Refresh(mixins.RefreshMixin, graphene.ClientIDMutation):
 
     @classmethod
     @google_captcha3("auth")
+    @within_validity_period
     def mutate_and_get_payload(cls, *args, **kwargs):
         return cls.refresh(*args, **kwargs)
 

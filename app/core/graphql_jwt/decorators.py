@@ -16,7 +16,7 @@ from graphql_jwt.utils import delete_cookie, set_cookie
 
 from account.backends import AuthBackend
 from account.signals import signin_fail, signin_success
-from core.decorators import google_captcha3
+from core.decorators import google_captcha3, within_validity_period
 from core.graphql_jwt.refresh_token.shortcuts import (
     create_refresh_token,
     refresh_token_lazy,
@@ -98,6 +98,7 @@ def token_auth(f):
     @csrf_rotation
     @refresh_expiration
     @google_captcha3("auth")
+    @within_validity_period
     def wrapper(cls, root, info, password, **kwargs):
         context = info.context
         context._jwt_token_auth = True

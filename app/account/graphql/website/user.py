@@ -9,7 +9,7 @@ from account.graphql.website.types.user import UserNode
 from account.models import User
 from account.services.user_service import UserService
 from account.variables.protected_email import PROTECTED_EMAIL
-from core.decorators import google_captcha3, strip_input
+from core.decorators import google_captcha3, strip_input, within_validity_period
 from core.utils import is_valid_email, is_valid_password
 
 
@@ -26,6 +26,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
     @classmethod
     @strip_input
     @google_captcha3("auth")
+    @within_validity_period
     @transaction.atomic
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         email = input["email"]

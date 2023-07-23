@@ -7,7 +7,7 @@ from graphene.utils.thenables import maybe_thenable
 from graphql_jwt.refresh_token.mutations import DeleteRefreshTokenCookie, Revoke
 import graphene
 
-from core.decorators import google_captcha3
+from core.decorators import google_captcha3, within_validity_period
 from core.graphql_jwt import mixins
 from core.graphql_jwt.decorators import token_auth
 from tenant.models import Tenant
@@ -93,6 +93,7 @@ class Refresh(mixins.RefreshMixin, graphene.Mutation):
 
     @classmethod
     @google_captcha3("auth")
+    @within_validity_period
     def mutate(cls, *arg, **kwargs):
         return cls.refresh(*arg, **kwargs)
 
