@@ -6,13 +6,13 @@ from django.db import models
 from safedelete.models import SOFT_DELETE_CASCADE
 
 from core.models import (
-    CreateUpdateDateAndSafeDeleteMixin,
+    CommonDateAndSafeDeleteMixin,
     PublishableModel,
     TranslationModel,
 )
 
 
-class Organization(CreateUpdateDateAndSafeDeleteMixin, PublishableModel):
+class Organization(CommonDateAndSafeDeleteMixin, PublishableModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     schema_name = models.CharField(max_length=32, db_index=True)
     language_code = models.CharField(max_length=35, default="zh-TW")
@@ -27,7 +27,7 @@ class Organization(CreateUpdateDateAndSafeDeleteMixin, PublishableModel):
         return str(self.id)
 
 
-class OrganizationTrans(CreateUpdateDateAndSafeDeleteMixin, TranslationModel):
+class OrganizationTrans(CommonDateAndSafeDeleteMixin, TranslationModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     organization = models.ForeignKey(
         Organization, related_name="translations", on_delete=models.CASCADE, null=True

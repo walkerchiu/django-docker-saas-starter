@@ -6,7 +6,7 @@ from django.db import models
 
 from safedelete.models import SafeDeleteModel, SOFT_DELETE_CASCADE
 
-from core.models import CreateUpdateDateAndSafeDeleteMixin
+from core.models import CommonDateAndSafeDeleteMixin
 from role import ProtectedRole
 from role.models import Role
 
@@ -15,7 +15,7 @@ class UserManager(BaseUserManager):
     pass
 
 
-class User(CreateUpdateDateAndSafeDeleteMixin, AbstractBaseUser):
+class User(CommonDateAndSafeDeleteMixin, AbstractBaseUser):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     endpoint = models.CharField(max_length=10, db_index=True, blank=True, null=True)
     email = models.EmailField(

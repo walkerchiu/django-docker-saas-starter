@@ -6,10 +6,10 @@ from django.db import models
 from django_tenants.models import TenantMixin, DomainMixin
 from safedelete.models import SOFT_DELETE_CASCADE
 
-from core.models import CreateUpdateDateAndSafeDeleteMixin, PublishableModel
+from core.models import CommonDateAndSafeDeleteMixin, PublishableModel
 
 
-class Tenant(TenantMixin, CreateUpdateDateAndSafeDeleteMixin):
+class Tenant(TenantMixin, CommonDateAndSafeDeleteMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     schema_name = models.CharField(max_length=32)
     email = models.EmailField(
@@ -28,7 +28,7 @@ class Tenant(TenantMixin, CreateUpdateDateAndSafeDeleteMixin):
         return str(self.id)
 
 
-class Contract(CreateUpdateDateAndSafeDeleteMixin, PublishableModel):
+class Contract(CommonDateAndSafeDeleteMixin, PublishableModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tenant = models.ForeignKey(Tenant, models.CASCADE)
     slug = models.CharField(max_length=32, unique=True, db_index=True)
@@ -47,7 +47,7 @@ class Contract(CreateUpdateDateAndSafeDeleteMixin, PublishableModel):
         return self.slug
 
 
-class Domain(DomainMixin, CreateUpdateDateAndSafeDeleteMixin):
+class Domain(DomainMixin, CommonDateAndSafeDeleteMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     tenant = models.ForeignKey(
         settings.TENANT_MODEL,

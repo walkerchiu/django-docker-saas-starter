@@ -6,7 +6,7 @@ from django.db.models import Q
 from safedelete.models import SafeDeleteModel
 
 
-class CreateUpdateDateAndSafeDeleteMixin(SafeDeleteModel):
+class CommonDateAndSafeDeleteMixin(SafeDeleteModel):
     created_at = models.DateTimeField(auto_now_add=True)
     updated_at = models.DateTimeField(auto_now=True)
 

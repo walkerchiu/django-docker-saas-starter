@@ -5,11 +5,11 @@ from django.db import models
 
 from safedelete.models import SOFT_DELETE_CASCADE
 
-from core.models import CreateUpdateDateAndSafeDeleteMixin, TranslationModel
+from core.models import CommonDateAndSafeDeleteMixin, TranslationModel
 from organization.models import Organization
 
 
-class Permission(CreateUpdateDateAndSafeDeleteMixin):
+class Permission(CommonDateAndSafeDeleteMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     organization = models.ForeignKey(Organization, models.CASCADE)
     slug = models.CharField(max_length=255, null=True, db_index=True)
@@ -27,7 +27,7 @@ class Permission(CreateUpdateDateAndSafeDeleteMixin):
         return str(self.id)
 
 
-class PermissionTrans(CreateUpdateDateAndSafeDeleteMixin, TranslationModel):
+class PermissionTrans(CommonDateAndSafeDeleteMixin, TranslationModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     permission = models.ForeignKey(
         Permission, related_name="translations", on_delete=models.CASCADE
@@ -47,7 +47,7 @@ class PermissionTrans(CreateUpdateDateAndSafeDeleteMixin, TranslationModel):
         return str(self.id)
 
 
-class Role(CreateUpdateDateAndSafeDeleteMixin):
+class Role(CommonDateAndSafeDeleteMixin):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     organization = models.ForeignKey(Organization, models.CASCADE)
     permissions = models.ManyToManyField(Permission)
@@ -66,7 +66,7 @@ class Role(CreateUpdateDateAndSafeDeleteMixin):
         return str(self.id)
 
 
-class RoleTrans(CreateUpdateDateAndSafeDeleteMixin, TranslationModel):
+class RoleTrans(CommonDateAndSafeDeleteMixin, TranslationModel):
     id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
     role = models.ForeignKey(
         Role, related_name="translations", on_delete=models.CASCADE
