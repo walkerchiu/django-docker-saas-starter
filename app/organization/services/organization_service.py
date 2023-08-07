@@ -9,6 +9,8 @@ from safedelete.models import HARD_DELETE
 from account.models import User
 from account.services.user_service import UserService
 from organization.models import Organization, OrganizationTrans
+from role import ProtectedPermission, ProtectedRole
+from role.models import Permission, Role
 
 
 class OrganizationService:
@@ -27,19 +29,59 @@ class OrganizationService:
                 name=organization_name,
             )
 
-            user_service = UserService()
-            result, user = user_service.create_user(
-                endpoint="dashboard",
-                email=email,
-                password=password,
-                username="demo",
-            )
+            result = self.init_default_data(organization)
+
+            if result:
+                user_service = UserService()
+                result, user = user_service.create_user(
+                    endpoint="dashboard",
+                    email=email,
+                    password=password,
+                    username="demo",
+                )
 
             if result:
                 return result, organization, user
             else:
                 organization.delete(force_policy=HARD_DELETE)
                 return result, None, None
+
+    @transaction.atomic
+    def init_default_data(self, organization: Organization) -> bool:
+        # Role
+        role_admin, _ = Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Admin
+        )
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Collaborator
+        )
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Customer
+        )
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.HQUser)
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Manager
+        )
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Member)
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Owner)
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Partner
+        )
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Staff)
+
+        permission_assign_role, created = Permission.objects.get_or_create(
+            organization=organization, slug=ProtectedPermission.AssignRole
+        )
+        if created:
+            role_admin.permissions.add(permission_assign_role)
+
+        permission_assign_permission, created = Permission.objects.get_or_create(
+            organization=organization, slug=ProtectedPermission.AssignPermission
+        )
+        if created:
+            role_admin.permissions.add(permission_assign_permission)
+
+        return True
 
     @transaction.atomic
     def delete_organization(self, schema_name: str, organization_id: uuid) -> bool:
