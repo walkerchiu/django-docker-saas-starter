@@ -39,6 +39,11 @@ class OrganizationService:
                     password=password,
                     username="demo",
                 )
+                if result:
+                    user = user_service.assign_owner(
+                        organization=organization,
+                        user=user,
+                    )
 
             if result:
                 return result, organization, user
