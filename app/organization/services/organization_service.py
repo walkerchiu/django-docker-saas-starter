@@ -11,6 +11,7 @@ from account.services.user_service import UserService
 from organization.models import Organization, OrganizationTrans
 from role import ProtectedPermission, ProtectedRole
 from role.models import Permission, Role
+from role.services.role_service import RoleService
 
 
 class OrganizationService:
@@ -40,7 +41,8 @@ class OrganizationService:
                     username="demo",
                 )
                 if result:
-                    user = user_service.assign_owner(
+                    role_service = RoleService()
+                    user = role_service.assign_owner(
                         organization=organization,
                         user=user,
                     )
