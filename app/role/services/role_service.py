@@ -6,6 +6,7 @@ from django.db import transaction
 from organization.models import Organization
 from role import ProtectedRole
 from role.models import Role
+from role.services.permission_service import PermissionService
 
 
 class RoleService:
@@ -131,3 +132,38 @@ class RoleService:
         user.roles.add(role_staff)
 
         return user
+
+    @transaction.atomic
+    def init_default_data(self, organization: Organization) -> bool:
+        role_admin, _ = Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Admin
+        )
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Collaborator
+        )
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Customer
+        )
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.HQUser)
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Manager
+        )
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Member)
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Owner)
+        Role.objects.get_or_create(
+            organization=organization, slug=ProtectedRole.Partner
+        )
+        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Staff)
+
+        service_permission = PermissionService()
+        (
+            result,
+            permission_assign_role,
+            permission_assign_permission,
+        ) = service_permission.init_default_data(organization)
+
+        if result:
+            role_admin.permissions.add(permission_assign_role)
+            role_admin.permissions.add(permission_assign_permission)
+
+        return result

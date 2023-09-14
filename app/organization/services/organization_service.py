@@ -9,8 +9,6 @@ from safedelete.models import HARD_DELETE
 from account.models import User
 from account.services.user_service import UserService
 from organization.models import Organization, OrganizationTrans
-from role import ProtectedPermission, ProtectedRole
-from role.models import Permission, Role
 from role.services.role_service import RoleService
 
 
@@ -55,40 +53,10 @@ class OrganizationService:
 
     @transaction.atomic
     def init_default_data(self, organization: Organization) -> bool:
-        # Role
-        role_admin, _ = Role.objects.get_or_create(
-            organization=organization, slug=ProtectedRole.Admin
-        )
-        Role.objects.get_or_create(
-            organization=organization, slug=ProtectedRole.Collaborator
-        )
-        Role.objects.get_or_create(
-            organization=organization, slug=ProtectedRole.Customer
-        )
-        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.HQUser)
-        Role.objects.get_or_create(
-            organization=organization, slug=ProtectedRole.Manager
-        )
-        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Member)
-        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Owner)
-        Role.objects.get_or_create(
-            organization=organization, slug=ProtectedRole.Partner
-        )
-        Role.objects.get_or_create(organization=organization, slug=ProtectedRole.Staff)
+        role_service = RoleService()
+        result = role_service.init_default_data(organization)
 
-        permission_assign_role, created = Permission.objects.get_or_create(
-            organization=organization, slug=ProtectedPermission.AssignRole
-        )
-        if created:
-            role_admin.permissions.add(permission_assign_role)
-
-        permission_assign_permission, created = Permission.objects.get_or_create(
-            organization=organization, slug=ProtectedPermission.AssignPermission
-        )
-        if created:
-            role_admin.permissions.add(permission_assign_permission)
-
-        return True
+        return result
 
     @transaction.atomic
     def delete_organization(self, schema_name: str, organization_id: uuid) -> bool:
