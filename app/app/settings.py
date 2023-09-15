@@ -25,6 +25,7 @@ django.utils.encoding.force_text = force_str
 
 # set casting, default value
 env = environ.Env(
+    APP_CSRF_VIEW_MIDDLEWARE=(bool, True),
     DEBUG=(bool, False),
     PLAYGROUND=(bool, True),
     RECAPTCHA_ENABLED=(bool, True),
@@ -39,6 +40,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # Take environment variables from .env file
 environ.Env.read_env(os.path.join(BASE_DIR, ".env"))
 
+APP_CSRF_VIEW_MIDDLEWARE = env("APP_CSRF_VIEW_MIDDLEWARE")
 APP_ENV = env("APP_ENV")
 APP_NAME = env("APP_NAME")
 
@@ -142,11 +144,14 @@ MIDDLEWARE = [
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
     "django.middleware.common.CommonMiddleware",
-    "django.middleware.csrf.CsrfViewMiddleware",
     "django.contrib.auth.middleware.AuthenticationMiddleware",
     "django.contrib.messages.middleware.MessageMiddleware",
     "django.middleware.clickjacking.XFrameOptionsMiddleware",
 ]
+
+if APP_CSRF_VIEW_MIDDLEWARE:
+    index = MIDDLEWARE.index("django.middleware.common.CommonMiddleware")
+    MIDDLEWARE.insert(index + 1, "django.middleware.csrf.CsrfViewMiddleware")
 
 
 # django-ipware
