@@ -23,15 +23,15 @@ from corsheaders.defaults import default_headers
 django.utils.encoding.force_text = force_str
 
 
-# set casting, default value
+# Set casting, default value
 env = environ.Env(
     APP_CSRF_VIEW_MIDDLEWARE=(bool, True),
     DEBUG=(bool, False),
-    PLAYGROUND=(bool, True),
-    RECAPTCHA_ENABLED=(bool, True),
     JWT_EXPIRATION_MINUTES=(int, 60),
     JWT_REFRESH_EXPIRATION_DAYS=(int, 7),
     JWT_REVOKE_AND_REFRESH=(bool, True),
+    PLAYGROUND=(bool, True),
+    RECAPTCHA_ENABLED=(bool, True),
 )
 
 # Build paths inside the project like this: BASE_DIR / 'subdir'.
