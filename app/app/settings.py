@@ -443,4 +443,4 @@ CAPTCHA = {
 # SILENCED_SYSTEM_CHECKS
 # https://docs.djangoproject.com/en/4.2/ref/settings/#silenced-system-checks
 
-SILENCED_SYSTEM_CHECKS = ["captcha.recaptcha_test_key_error"]
+SILENCED_SYSTEM_CHECKS = ["auth.W004", "captcha.recaptcha_test_key_error"]
