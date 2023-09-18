@@ -1,4 +1,4 @@
-# Django Docker Tenants Starter
+# Django Docker SaaS Starter
 
 ## Get Started For IDE
 
