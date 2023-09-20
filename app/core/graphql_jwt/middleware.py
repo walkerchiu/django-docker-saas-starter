@@ -2,7 +2,7 @@ from django.conf import settings
 from django.contrib.auth.middleware import get_user
 from django.contrib.auth.models import AnonymousUser
 
-from graphql_jwt.compat import get_operation_name
+from graphql_jwt._compat import get_root_type
 from graphql_jwt.path import PathDict
 from graphql_jwt.settings import jwt_settings
 from graphql_jwt.utils import get_http_authorization, get_token_argument
@@ -16,8 +16,8 @@ __all__ = [
 
 
 def allow_any(info, **kwargs):
-    operation_name = get_operation_name(info.operation.operation).title()
-    field = info.schema.get_type(operation_name).fields.get(info.field_name)
+    root_type = get_root_type(info)
+    field = root_type.fields.get(info.field_name)
 
     if field is None:
         return False

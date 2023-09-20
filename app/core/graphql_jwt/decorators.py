@@ -8,9 +8,9 @@ from django.middleware.csrf import rotate_token
 from django.utils.translation import gettext as _
 
 from django_tenants.utils import schema_context
+from graphene import ResolveInfo
 from graphene.utils.thenables import maybe_thenable
 from graphql_jwt import exceptions, signals
-from graphql_jwt.compat import GraphQLResolveInfo
 from graphql_jwt.settings import jwt_settings
 from graphql_jwt.utils import delete_cookie, set_cookie
 
@@ -39,7 +39,7 @@ __all__ = [
 def context(f):
     def decorator(func):
         def wrapper(*args, **kwargs):
-            info = next(arg for arg in args if isinstance(arg, GraphQLResolveInfo))
+            info = next(arg for arg in args if isinstance(arg, ResolveInfo))
             return func(info.context, *args, **kwargs)
 
         return wrapper
