@@ -1,4 +1,34 @@
+from graphene_django.filter import DjangoFilterConnectionField
 import graphene
+
+
+class DjangoFilterConnectionField(DjangoFilterConnectionField):
+    @classmethod
+    def resolve_queryset(
+        cls,
+        connection,
+        iterable,
+        info,
+        args,
+        filtering_args,
+        filterset_class,
+    ):
+        qs = super().resolve_queryset(
+            connection, iterable, info, args, filtering_args, filterset_class
+        )
+
+        total_count = qs.count()
+
+        page_number = args.get("page_number", 1)
+        page_size = args.get("page_size", 25)
+
+        start = (page_number - 1) * page_size
+        end = start + page_size
+
+        sliced_qs = qs[start:end]
+        sliced_qs.total_count = total_count
+
+        return sliced_qs
 
 
 class ExtendedConnection(graphene.relay.Connection):
@@ -18,4 +48,4 @@ class ExtendedConnection(graphene.relay.Connection):
         return result
 
     def resolve_total_count(self, *_) -> int:
-        return self.iterable.count()
+        return getattr(self.iterable, "total_count", self.iterable.count())
