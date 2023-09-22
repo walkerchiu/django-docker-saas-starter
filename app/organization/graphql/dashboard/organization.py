@@ -2,12 +2,12 @@ from django.core.exceptions import ValidationError
 from django.db import connection, transaction
 
 from graphene import ResolveInfo
-from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
 import graphene
 
 from core.decorators import strip_input
 from core.helpers.translation_helper import TranslationHelper
+from core.relay.connection import DjangoFilterConnectionField
 from core.types import TaskStatusType
 from core.utils import is_slug_invalid
 from organization.graphql.dashboard.types.organization import (
@@ -209,5 +209,8 @@ class OrganizationMutation(graphene.ObjectType):
 class OrganizationQuery(graphene.ObjectType):
     organization = graphene.relay.Node.Field(OrganizationNode)
     organizations = DjangoFilterConnectionField(
-        OrganizationNode, orderBy=graphene.List(of_type=graphene.String)
+        OrganizationNode,
+        orderBy=graphene.List(of_type=graphene.String),
+        page_number=graphene.Int(),
+        page_size=graphene.Int(),
     )

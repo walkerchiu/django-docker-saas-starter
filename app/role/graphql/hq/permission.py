@@ -2,12 +2,12 @@ from django.core.exceptions import ValidationError
 from django.db import connection, transaction
 
 from graphene import ResolveInfo
-from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
 import graphene
 
 from core.decorators import strip_input
 from core.helpers.translation_helper import TranslationHelper
+from core.relay.connection import DjangoFilterConnectionField
 from core.types import TaskStatusType
 from core.utils import is_slug_invalid
 from organization.models import Organization
@@ -205,5 +205,8 @@ class PermissionMutation(graphene.ObjectType):
 class PermissionQuery(graphene.ObjectType):
     permission = graphene.relay.Node.Field(PermissionNode)
     permissions = DjangoFilterConnectionField(
-        PermissionNode, orderBy=graphene.List(of_type=graphene.String)
+        PermissionNode,
+        orderBy=graphene.List(of_type=graphene.String),
+        page_number=graphene.Int(),
+        page_size=graphene.Int(),
     )

@@ -4,12 +4,12 @@ from django.db import transaction
 
 from django_tenants.utils import schema_context
 from graphene import ResolveInfo
-from graphene_django.filter import DjangoFilterConnectionField
 from graphql_relay import from_global_id
 import graphene
 import validators
 
 from core.decorators import strip_input
+from core.relay.connection import DjangoFilterConnectionField
 from core.types import TaskStatusType
 from tenant.graphql.hq.types.domain import DomainNode
 from tenant.models import Domain, Tenant
@@ -182,5 +182,8 @@ class DomainMutation(graphene.ObjectType):
 class DomainQuery(graphene.ObjectType):
     domain = graphene.relay.Node.Field(DomainNode)
     domains = DjangoFilterConnectionField(
-        DomainNode, orderBy=graphene.List(of_type=graphene.String)
+        DomainNode,
+        orderBy=graphene.List(of_type=graphene.String),
+        page_number=graphene.Int(),
+        page_size=graphene.Int(),
     )
