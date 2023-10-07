@@ -42,7 +42,7 @@ class ProfileNode(DjangoObjectType):
     @login_required
     def get_node(cls, info: ResolveInfo, id):
         try:
-            profile = cls._meta.model.objects.get(pk=id, user_id=info.context.user.id)
+            profile = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
             raise Exception("Bad Request!")
 

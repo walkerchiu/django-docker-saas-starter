@@ -34,12 +34,12 @@ class ProfileNode(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info: ResolveInfo):
-        return queryset.filter(user_id=info.context.user.id)
+        return queryset
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):
         try:
-            profile = cls._meta.model.objects.get(pk=id, user_id=info.context.user.id)
+            profile = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
             raise Exception("Bad Request!")
 

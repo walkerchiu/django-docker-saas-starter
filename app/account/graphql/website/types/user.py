@@ -48,7 +48,7 @@ class UserNode(DjangoObjectType):
     @login_required
     def get_node(cls, info: ResolveInfo, id):
         try:
-            user = cls._meta.model.objects.get(pk=info.context.user.id)
+            user = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
             raise Exception("Bad Request!")
 

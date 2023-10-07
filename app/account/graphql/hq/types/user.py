@@ -52,9 +52,6 @@ class UserNode(DjangoObjectType):
         except cls._meta.model.DoesNotExist:
             raise Exception("Bad Request!")
 
-        if info.context.user.id == user.id:
-            return user
-
         raise Exception("Bad Request!")
 
     @staticmethod
