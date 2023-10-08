@@ -87,3 +87,26 @@ class HealthCheckMiddleware(MiddlewareMixin):
         response = self.get_response(request)
 
         return response
+
+
+class HeaderHandlerMiddleware(MiddlewareMixin):
+    def __init__(self, get_response):
+        self.get_response = get_response
+
+    def __call__(self, request: HttpRequest):
+        request.user_agent = request.headers.get("X-User-Agent", None)
+        request.user_ip = request.headers.get("X-User-Ip", None)
+        request.user_location = request.headers.get("X-User-Location", None)
+
+        if not settings.PLAYGROUND:
+            pass
+            # if request.user_agent is None:
+            #     raise Exception("Bad Request!")
+            # elif request.user_ip is None:
+            #     raise Exception("Bad Request!")
+            # elif request.user_location is None:
+            #     raise Exception("Bad Request!")
+
+        response = self.get_response(request)
+
+        return response

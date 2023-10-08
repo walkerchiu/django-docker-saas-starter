@@ -140,6 +140,7 @@ MIDDLEWARE = [
     "corsheaders.middleware.CorsMiddleware",
     "core.middleware.DepthCheckMiddleware",
     "core.middleware.HealthCheckMiddleware",
+    "core.middleware.HeaderHandlerMiddleware",
     "tenant.middleware.XTenantMiddleware",
     "django.middleware.security.SecurityMiddleware",
     "django.contrib.sessions.middleware.SessionMiddleware",
@@ -240,6 +241,9 @@ CORS_ALLOW_METHODS = [
 CORS_ALLOW_HEADERS = list(default_headers) + [
     "X-Endpoint",
     "X-Tenant",
+    "X-User-Agent",
+    "X-User-Ip",
+    "X-User-Location",
 ]
 
 CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
