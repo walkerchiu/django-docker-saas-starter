@@ -11,6 +11,7 @@ from graphene.validation import depth_limit_validator
 from ipware import get_client_ip
 
 from app.schemas.schema_auth import schema
+from core.helpers.ip_helper import get_location_by_ip
 from tenant.models import Domain
 
 
@@ -97,6 +98,9 @@ class HeaderHandlerMiddleware(MiddlewareMixin):
         request.user_agent = request.headers.get("X-User-Agent", None)
         request.user_ip = request.headers.get("X-User-Ip", None)
         request.user_location = request.headers.get("X-User-Location", None)
+
+        if request.user_ip and request.user_location is None:
+            request.user_location = get_location_by_ip(request.user_ip)
 
         if not settings.PLAYGROUND:
             pass
