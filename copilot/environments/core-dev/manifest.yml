@@ -1,0 +1,45 @@
+---
+# The manifest for the "core-dev" environment.
+# Read the full specification for the "Environment" type at:
+#  https://aws.github.io/copilot-cli/docs/manifest/environment/
+
+# Your environment name will be used in naming your resources like VPC, cluster, etc.
+name: core-dev
+type: Environment
+# Import your own VPC and subnets or configure how they should be created.
+# network:
+#   vpc:
+#     id:
+network:
+  vpc:
+    cidr: 10.0.0.0/16
+    subnets:
+      public:
+        - cidr: 10.0.0.0/24
+          az: ap-northeast-1a
+        - cidr: 10.0.1.0/24
+          az: ap-northeast-1c
+      private:
+        - cidr: 10.0.2.0/24
+          az: ap-northeast-1a
+        - cidr: 10.0.3.0/24
+          az: ap-northeast-1c
+    security_group:
+      ingress:
+        - ip_protocol: tcp
+          ports: 80
+          cidr: 0.0.0.0/0
+        - ip_protocol: tcp
+          ports: 443
+          cidr: 0.0.0.0/0
+# Configure the load balancers in your environment, once created.
+# http:
+#   public:
+#   private:
+http:
+  public:  # Apply an existing certificate to your public load balancer.
+    certificates: [arn:aws:acm:ap-northeast-1:xxx:certificate/xxx]
+    access_logs: true
+# Configure observability for your environment resources.
+observability:
+  container_insights: true

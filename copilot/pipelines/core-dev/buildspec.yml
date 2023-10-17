@@ -1,0 +1,44 @@
+---
+# Buildspec runs in the build stage of your pipeline.
+version: 0.2
+phases:
+  install:
+    runtime-versions:
+      ruby: 3.1
+    commands:
+      - echo "cd into $CODEBUILD_SRC_DIR"
+      - cd $CODEBUILD_SRC_DIR
+      # Download the copilot linux binary.
+      - wget -q https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.29.1
+        -O copilot-linux
+      - chmod +x ./copilot-linux
+  build:
+    commands:
+      - export tag="$(git describe --tags --abbrev=0)"
+      - export datetime="$(git log -n 1 --pretty=format:'%cI')"
+      - export hash=$(echo $CODEBUILD_RESOLVED_SOURCE_VERSION | cut -b -8)
+      - echo "Generate version.ini"
+      - echo "[default]" > version.ini
+      - echo "tag=$tag" >> version.ini
+      - echo "datetime=$datetime" >> version.ini
+      - echo "hash=$hash" >> version.ini
+      - cat version.ini
+      - echo "Generate .env file"
+      - cp app/.env.dev app/.env
+      - echo "Run your tests"
+      # - make test
+  post_build:
+    commands:
+      - ls -l
+      - export COLOR="false"
+      - export CI="true"
+      - pipeline=$(cat $CODEBUILD_SRC_DIR/copilot/pipelines/core-dev/manifest.yml
+        | ruby -ryaml -rjson -e 'puts JSON.pretty_generate(YAML.load(ARGF))')
+      - stages=$(echo $pipeline | jq -r '.stages[].name')
+      - ./copilot-linux env package -n 'core-dev' --output-dir './infrastructure'
+        --upload-assets --force;
+      - ./copilot-linux svc package -n 'core-dev' -e 'core-dev' --output-dir './infrastructure'
+        --tag $tag --upload-assets;
+      - ls -lah ./infrastructure
+artifacts:
+  files: [infrastructure/*]
