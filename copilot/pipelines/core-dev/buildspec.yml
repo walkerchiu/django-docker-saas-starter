@@ -4,12 +4,12 @@ version: 0.2
 phases:
   install:
     runtime-versions:
-      ruby: 3.1
+      ruby: 3.2
     commands:
       - echo "cd into $CODEBUILD_SRC_DIR"
       - cd $CODEBUILD_SRC_DIR
       # Download the copilot linux binary.
-      - wget -q https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.29.1
+      - wget -q https://ecs-cli-v2-release.s3.amazonaws.com/copilot-linux-v1.31.0
         -O copilot-linux
       - chmod +x ./copilot-linux
   build:
