@@ -75,7 +75,7 @@ class CreateOrganization(graphene.relay.ClientIDMutation):
                         description=translation["description"],
                     )
             except Organization.DoesNotExist:
-                raise Exception("Can not find this organization!")
+                raise ValidationError("Can not find this organization!")
 
         return CreateOrganization(success=True, organization=organization)
 
@@ -162,7 +162,7 @@ class UpdateOrganization(graphene.relay.ClientIDMutation):
         try:
             _, organization_id = from_global_id(id)
         except:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         organization = Organization.objects.only("id").get(
             schema_name=connection.schema_name
@@ -195,7 +195,7 @@ class UpdateOrganization(graphene.relay.ClientIDMutation):
                         },
                     )
             except Organization.DoesNotExist:
-                raise Exception("Can not find this organization!")
+                raise ValidationError("Can not find this organization!")
 
         return UpdateOrganization(success=True, organization=organization)
 

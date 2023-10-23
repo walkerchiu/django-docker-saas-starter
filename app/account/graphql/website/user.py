@@ -51,7 +51,7 @@ class CreateUser(graphene.relay.ClientIDMutation):
         if result:
             return CreateUser(success=True)
         else:
-            raise Exception("Can not create this user!")
+            raise ValidationError("Can not create this user!")
 
 
 class UserMutation(graphene.ObjectType):

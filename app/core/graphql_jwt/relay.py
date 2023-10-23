@@ -1,5 +1,6 @@
 from django.conf import settings
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import connection
 from django.dispatch import receiver
 from django.utils import timezone
@@ -55,8 +56,8 @@ class JSONWebTokenMutation(mixins.ObtainJSONWebTokenMixin, graphene.ClientIDMuta
         def on_resolve(payload):
             try:
                 payload.client_mutation_id = input.get("client_mutation_id")
-            except Exception:
-                raise Exception(
+            except ValidationError:
+                raise ValidationError(
                     f"Cannot set client_mutation_id in the payload object {repr(payload)}"
                 )
             return payload
@@ -76,7 +77,7 @@ class JSONWebTokenMutation(mixins.ObtainJSONWebTokenMixin, graphene.ClientIDMuta
                 if tenant:
                     schema_name = tenant.schema_name
                 else:
-                    raise Exception("Please enter valid credentials")
+                    raise ValidationError("Please enter valid credentials")
 
         with schema_context(schema_name):
             result = cls.mutate_and_get_payload(root, info, **input)

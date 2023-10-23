@@ -1,6 +1,7 @@
 import json
 
 from django.conf import settings
+from django.core.exceptions import ValidationError
 from django.http import HttpResponse
 from django.http.request import HttpRequest
 from django.utils.deprecation import MiddlewareMixin
@@ -27,7 +28,7 @@ class DepthCheckMiddleware(MiddlewareMixin):
                 rules=(depth_limit_validator(max_depth=settings.GRAPHENE_MAX_DEPTH),),
             )
             if validation_errors:
-                raise Exception("Query is too nested")
+                raise ValidationError("Query is too nested")
 
         response = self.get_response(request)
 
@@ -79,11 +80,11 @@ class HealthCheckMiddleware(MiddlewareMixin):
             if request.path.startswith("/auth/") and request.headers.get(
                 "Authorization"
             ):
-                raise Exception("This operation is not allowed!")
+                raise ValidationError("This operation is not allowed!")
             elif request.path.startswith("/dashboard/") and not request.headers.get(
                 "Authorization"
             ):
-                raise Exception("This operation is not allowed!")
+                raise ValidationError("This operation is not allowed!")
 
         response = self.get_response(request)
 
@@ -105,11 +106,11 @@ class HeaderHandlerMiddleware(MiddlewareMixin):
         if not settings.PLAYGROUND:
             pass
             # if request.user_agent is None:
-            #     raise Exception("Bad Request!")
+            #     raise ValidationError("Bad Request!")
             # elif request.user_ip is None:
-            #     raise Exception("Bad Request!")
+            #     raise ValidationError("Bad Request!")
             # elif request.user_location is None:
-            #     raise Exception("Bad Request!")
+            #     raise ValidationError("Bad Request!")
 
         response = self.get_response(request)
 

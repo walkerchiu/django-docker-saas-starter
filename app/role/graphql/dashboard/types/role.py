@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from django_filters import (
     BooleanFilter,
     CharFilter,
@@ -98,7 +100,7 @@ class RoleNode(DjangoObjectType):
         try:
             role = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         return role
 

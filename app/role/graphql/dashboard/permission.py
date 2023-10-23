@@ -73,7 +73,7 @@ class CreatePermission(graphene.relay.ClientIDMutation):
                         description=translation["description"],
                     )
             except Permission.DoesNotExist:
-                raise Exception("Can not find this permission!")
+                raise ValidationError("Can not find this permission!")
 
         return CreatePermission(success=True, permission=permission)
 
@@ -160,7 +160,7 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
         try:
             _, permission_id = from_global_id(id)
         except:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         organization = Organization.objects.only("id").get(
             schema_name=connection.schema_name
@@ -191,7 +191,7 @@ class UpdatePermission(graphene.relay.ClientIDMutation):
                         },
                     )
             except Permission.DoesNotExist:
-                raise Exception("Can not find this permission!")
+                raise ValidationError("Can not find this permission!")
 
         return UpdatePermission(success=True, permission=permission)
 

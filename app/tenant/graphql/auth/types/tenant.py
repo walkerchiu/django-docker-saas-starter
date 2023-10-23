@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
 from graphene import ResolveInfo
@@ -33,14 +35,14 @@ class TenantNode(DjangoObjectType):
     @classmethod
     @login_required
     def get_queryset(cls, queryset, info: ResolveInfo):
-        raise Exception("This operation is not allowed!")
+        raise ValidationError("This operation is not allowed!")
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):
         try:
             tenant = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         if (
             info.context.user.is_authenticated
@@ -49,7 +51,7 @@ class TenantNode(DjangoObjectType):
         ):
             return tenant
 
-        raise Exception("Bad Request!")
+        raise ValidationError("Bad Request!")
 
 
 class TenantConnection(graphene.relay.Connection):

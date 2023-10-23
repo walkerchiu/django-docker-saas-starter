@@ -3,6 +3,7 @@ from datetime import datetime
 from functools import wraps
 
 from django.contrib.auth import get_user_model
+from django.core.exceptions import ValidationError
 from django.db import connection
 from django.middleware.csrf import rotate_token
 from django.utils.translation import gettext as _
@@ -107,7 +108,7 @@ def token_auth(f):
         endpoint = info.context.headers.get("X-Endpoint")
 
         if endpoint not in ("hq", "dashboard", "website"):
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         with schema_context(schema_name):
             user = AuthBackend().authenticate(
@@ -126,9 +127,9 @@ def token_auth(f):
                 )
 
             if endpoint == "hq" and not user.is_hq_user:
-                raise Exception("This operation is not allowed!")
+                raise ValidationError("This operation is not allowed!")
             elif endpoint == "dashboard" and not user.is_staff:
-                raise Exception("This operation is not allowed!")
+                raise ValidationError("This operation is not allowed!")
 
             signin_success.send(sender="token_auth", info=info, user=user)
 

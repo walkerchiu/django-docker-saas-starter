@@ -33,7 +33,7 @@ class CheckEmailAvailable(graphene.relay.ClientIDMutation):
         endpoint = info.context.headers.get("x-endpoint")
 
         if endpoint not in ("hq", "dashboard", "website"):
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         if not is_valid_email(email):
             raise ValidationError("The email is invalid!")
@@ -72,7 +72,7 @@ class CheckUsernameAvailable(graphene.relay.ClientIDMutation):
         endpoint = info.context.headers.get("x-endpoint")
 
         if endpoint not in ("hq", "dashboard", "website"):
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         if info.context.user.is_authenticated:
             if (
@@ -104,7 +104,7 @@ class UpdateEmail(graphene.relay.ClientIDMutation):
         endpoint = info.context.headers.get("x-endpoint")
 
         if endpoint not in ("hq", "dashboard", "website"):
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         user = info.context.user
 
@@ -187,7 +187,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         endpoint = info.context.headers.get("x-endpoint")
 
         if endpoint not in ("hq", "dashboard", "website"):
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         if not is_valid_email(old_email):
             raise ValidationError("The oldEmail is invalid!")
@@ -199,7 +199,7 @@ class UpdateUser(graphene.relay.ClientIDMutation):
         try:
             user = User.objects.get(endpoint=endpoint, email=old_email)
         except:
-            raise Exception("Can not find this user!")
+            raise ValidationError("Can not find this user!")
         else:
             if not user.check_password(password):
                 raise ValidationError("The password is invalid!")
@@ -246,7 +246,7 @@ class UpdateUsername(graphene.relay.ClientIDMutation):
         endpoint = info.context.headers.get("x-endpoint")
 
         if endpoint not in ("hq", "dashboard", "website"):
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         user = info.context.user
 

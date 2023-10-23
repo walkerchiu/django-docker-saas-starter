@@ -69,7 +69,7 @@ class CreateRole(graphene.relay.ClientIDMutation):
                         description=translation["description"],
                     )
             except Role.DoesNotExist:
-                raise Exception("Can not find this role!")
+                raise ValidationError("Can not find this role!")
 
         return CreateRole(success=True, role=role)
 
@@ -152,7 +152,7 @@ class UpdateRole(graphene.relay.ClientIDMutation):
         try:
             _, role_id = from_global_id(id)
         except:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         organization = Organization.objects.only("id").get(
             schema_name=connection.schema_name
@@ -183,7 +183,7 @@ class UpdateRole(graphene.relay.ClientIDMutation):
                         },
                     )
             except Role.DoesNotExist:
-                raise Exception("Can not find this role!")
+                raise ValidationError("Can not find this role!")
 
         return UpdateRole(success=True, role=role)
 

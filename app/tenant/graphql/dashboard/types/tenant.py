@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from django_filters import (
     CharFilter,
     DateTimeFilter,
@@ -67,14 +69,14 @@ class TenantNode(DjangoObjectType):
 
     @classmethod
     def get_queryset(cls, queryset, info: ResolveInfo):
-        raise Exception("This operation is not allowed!")
+        raise ValidationError("This operation is not allowed!")
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):
         try:
             tenant = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         return tenant
 

@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from django_filters import (
     CharFilter,
     DateTimeFilter,
@@ -76,7 +78,7 @@ class TenantNode(DjangoObjectType):
         try:
             tenant = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         return tenant
 

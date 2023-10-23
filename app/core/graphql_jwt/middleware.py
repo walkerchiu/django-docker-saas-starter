@@ -1,6 +1,7 @@
 from django.conf import settings
 from django.contrib.auth.middleware import get_user
 from django.contrib.auth.models import AnonymousUser
+from django.core.exceptions import ValidationError
 
 from graphql_jwt._compat import get_root_type
 from graphql_jwt.path import PathDict
@@ -85,11 +86,11 @@ class JSONWebTokenMiddleware:
             endpoint = info.context.path.split("/")[1]
             if endpoint in ("dashboard", "hq"):
                 if user is None:
-                    raise Exception("The token is invalid!")
+                    raise ValidationError("The token is invalid!")
                 elif not user.is_staff:
-                    raise Exception("This operation is not allowed!")
+                    raise ValidationError("This operation is not allowed!")
                 elif endpoint == "hq":
                     if not user.is_hq_user:
-                        raise Exception("This operation is not allowed!")
+                        raise ValidationError("This operation is not allowed!")
 
         return next(root, info, **kwargs)

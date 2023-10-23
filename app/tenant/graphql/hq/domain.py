@@ -35,7 +35,7 @@ class CreateDomain(graphene.relay.ClientIDMutation):
             isPrimary = input["isPrimary"]
 
             if not validators.domain(value):
-                raise Exception("The domain is invalid!")
+                raise ValidationError("The domain is invalid!")
             elif value in PROTECTED_SUBDOMAIN:
                 raise ValidationError("The domain is being protected!")
             elif Domain.objects.filter(domain=value).exists():
@@ -46,7 +46,7 @@ class CreateDomain(graphene.relay.ClientIDMutation):
 
                 tenant = Tenant.objects.get(id=tenant_id)
             except:
-                raise Exception("Can not find this tenant!")
+                raise ValidationError("Can not find this tenant!")
 
             domain = Domain(
                 tenant=tenant, domain=value, is_primary=isPrimary, is_builtin=False
@@ -82,7 +82,7 @@ class DeleteDomainBatch(graphene.relay.ClientIDMutation):
 
                 tenant = Tenant.objects.get(id=tenant_id)
             except:
-                raise Exception("Can not find this tenant!")
+                raise ValidationError("Can not find this tenant!")
 
             warnings = {
                 "done": [],
@@ -138,7 +138,7 @@ class UpdateDomain(graphene.relay.ClientIDMutation):
             isPrimary = input["isPrimary"]
 
             if not validators.domain(value):
-                raise Exception("The domain is invalid!")
+                raise ValidationError("The domain is invalid!")
             elif value in PROTECTED_SUBDOMAIN:
                 raise ValidationError("The domain is being protected!")
 
@@ -147,7 +147,7 @@ class UpdateDomain(graphene.relay.ClientIDMutation):
 
                 tenant = Tenant.objects.get(id=tenant_id)
             except:
-                raise Exception("Can not find this tenant!")
+                raise ValidationError("Can not find this tenant!")
 
             try:
                 _, domain_id = from_global_id(id)
@@ -156,7 +156,7 @@ class UpdateDomain(graphene.relay.ClientIDMutation):
                     pk=domain_id, tenant=tenant, is_builtin=False
                 )
             except:
-                raise Exception("Can not find this domain!")
+                raise ValidationError("Can not find this domain!")
 
             if Domain.objects.filter(domain=value).exclude(pk=domain_id).exists():
                 raise ValidationError("The domain is already in use!")

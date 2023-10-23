@@ -38,7 +38,7 @@ class RegisterTenant(graphene.relay.ClientIDMutation):
     def mutate_and_get_payload(cls, root, info: ResolveInfo, **input):
         subdomain_endpoint = info.context.headers.get("x-tenant").split(".")[0]
         if subdomain_endpoint != "account":
-            raise Exception("This operation is not allowed!")
+            raise ValidationError("This operation is not allowed!")
 
         with schema_context(settings.PUBLIC_SCHEMA_NAME):
             email = input["email"]
@@ -55,7 +55,7 @@ class RegisterTenant(graphene.relay.ClientIDMutation):
             domain: str = subdomain + "." + settings.DOMAIN_WEBSITE
 
             if not validators.domain(domain):
-                raise Exception("The domain is invalid!")
+                raise ValidationError("The domain is invalid!")
             elif Tenant.objects.filter(email=email).exists():
                 raise ValidationError("The email is already in use!")
             elif Domain.objects.filter(domain=domain).exists():

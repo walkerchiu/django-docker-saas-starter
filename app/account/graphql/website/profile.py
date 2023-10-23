@@ -1,3 +1,4 @@
+from django.core.exceptions import ValidationError
 from django.db import transaction
 
 from graphene import ResolveInfo
@@ -34,7 +35,7 @@ class UpdateProfile(graphene.relay.ClientIDMutation):
             profile.birth = birth
             profile.save()
         except Profile.DoesNotExist:
-            raise Exception("Can not find this profile!")
+            raise ValidationError("Can not find this profile!")
 
         return UpdateProfile(success=True, profile=profile)
 

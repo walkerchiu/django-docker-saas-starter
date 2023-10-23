@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from graphene_django import DjangoObjectType
 from graphene import ResolveInfo
 import graphene
@@ -41,7 +43,7 @@ class ProfileNode(DjangoObjectType):
         try:
             profile = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         return profile
 

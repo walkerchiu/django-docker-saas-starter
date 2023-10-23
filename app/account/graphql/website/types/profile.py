@@ -1,3 +1,5 @@
+from django.core.exceptions import ValidationError
+
 from graphene import ResolveInfo
 from graphene_django import DjangoObjectType
 from graphql_jwt.decorators import login_required
@@ -36,7 +38,7 @@ class ProfileNode(DjangoObjectType):
     @classmethod
     @login_required
     def get_queryset(cls, queryset, info: ResolveInfo):
-        raise Exception("This operation is not allowed!")
+        raise ValidationError("This operation is not allowed!")
 
     @classmethod
     @login_required
@@ -44,7 +46,7 @@ class ProfileNode(DjangoObjectType):
         try:
             profile = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise Exception("Bad Request!")
+            raise ValidationError("Bad Request!")
 
         return profile
 
