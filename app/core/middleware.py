@@ -11,7 +11,10 @@ from graphql import validate, parse
 from graphene.validation import depth_limit_validator
 from ipware import get_client_ip
 
-from app.schemas.schema_auth import schema
+from app.schemas.schema_auth import schema as schema_auth
+from app.schemas.schema_dashboard import schema as schema_dashboard
+from app.schemas.schema_hq import schema as schema_hq
+from app.schemas.schema_website import schema as schema_website
 from core.helpers.ip_helper import get_location_by_ip
 from tenant.models import Domain
 
@@ -22,11 +25,38 @@ class DepthCheckMiddleware(MiddlewareMixin):
             body = json.loads(request.body.decode())
             query = body["query"]
 
-            validation_errors = validate(
-                schema=schema.graphql_schema,
-                document_ast=parse(query),
-                rules=(depth_limit_validator(max_depth=settings.GRAPHENE_MAX_DEPTH),),
-            )
+            if request.path.startswith("/auth/"):
+                validation_errors = validate(
+                    schema=schema_auth.graphql_schema,
+                    document_ast=parse(query),
+                    rules=(
+                        depth_limit_validator(max_depth=settings.GRAPHENE_MAX_DEPTH),
+                    ),
+                )
+            elif request.path.startswith("/dashboard/"):
+                validation_errors = validate(
+                    schema=schema_dashboard.graphql_schema,
+                    document_ast=parse(query),
+                    rules=(
+                        depth_limit_validator(max_depth=settings.GRAPHENE_MAX_DEPTH),
+                    ),
+                )
+            elif request.path.startswith("/hq/"):
+                validation_errors = validate(
+                    schema=schema_hq.graphql_schema,
+                    document_ast=parse(query),
+                    rules=(
+                        depth_limit_validator(max_depth=settings.GRAPHENE_MAX_DEPTH),
+                    ),
+                )
+            elif request.path.startswith("/website/"):
+                validation_errors = validate(
+                    schema=schema_website.graphql_schema,
+                    document_ast=parse(query),
+                    rules=(
+                        depth_limit_validator(max_depth=settings.GRAPHENE_MAX_DEPTH),
+                    ),
+                )
             if validation_errors:
                 raise ValidationError("Query is too nested")
 
