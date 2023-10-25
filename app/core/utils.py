@@ -1,4 +1,17 @@
+from datetime import timedelta
 import re
+import zoneinfo
+
+from django.utils import timezone
+
+
+def get_time_threshold(
+    minutes: int, timezone: str = "Asia/Taipei"
+) -> timezone.datetime:
+    current_time = timezone.localtime(
+        timezone.now(), timezone=zoneinfo.ZoneInfo(key=timezone)
+    )
+    return current_time - timedelta(minutes=minutes)
 
 
 def is_valid_email(value: str) -> bool:
