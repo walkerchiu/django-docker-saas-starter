@@ -11,6 +11,7 @@ class AESHelper:
         self.iv = iv.encode("utf-8")
 
     def encrypt_data(self, data):
+        data = quote(data)
         data = data.encode("utf-8")
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         ct_bytes = cipher.encrypt(pad(data, AES.block_size))
@@ -23,5 +24,6 @@ class AESHelper:
         cipher = AES.new(self.key, AES.MODE_CBC, self.iv)
         pt_bytes = unpad(cipher.decrypt(ct_bytes), AES.block_size)
         pt = pt_bytes.decode("utf-8")
+        pt = unquote(pt)
 
         return pt
