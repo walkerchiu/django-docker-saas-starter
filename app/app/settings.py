@@ -418,6 +418,9 @@ else:
     }
 
 
+# AWS S3
+# https://django-storages.readthedocs.io/en/latest/backends/amazon-S3.html#authentication-settings
+
 AWS_STORAGE_BUCKET_NAME = env("AWS_STORAGE_BUCKET_NAME")
 AWS_S3_REGION_NAME = env("AWS_S3_REGION_NAME")
 AWS_S3_SIGNATURE_VERSION = env("AWS_S3_SIGNATURE_VERSION")
@@ -426,6 +429,8 @@ AWS_S3_OBJECT_PARAMETERS = {
 }
 AWS_QUERYSTRING_EXPIRE = env("AWS_QUERYSTRING_EXPIRE")
 
+
+# CAPTCHA
 
 CAPTCHA = {
     # https://developers.google.com/recaptcha/docs/versions
