@@ -17,6 +17,8 @@ services:
             - SQL_USER=
             - SQL_PASSWORD=
             - SQL_DATABASE=
+            - AWS_KMS_KEY_ID=
+            - AWS_KMS_REGION_NAME=ap-northeast-1
         networks: [backend]
         depends_on: [db]
     db:
