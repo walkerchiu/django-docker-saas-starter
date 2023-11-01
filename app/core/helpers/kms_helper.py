@@ -61,3 +61,23 @@ class KMSHelper:
         hmac = base64.b64encode(response["Mac"]).decode("utf-8")
 
         return hmac
+
+    def verify_mac(
+        self,
+        plaintext: str,
+        hmac: str,
+        algorithm: str = "HMAC_SHA_256",
+        key_id: str = None,
+    ) -> str:
+        if key_id is None:
+            key_id = self.key_id_hmac
+
+        decoded_hmac = base64.b64decode(hmac)
+        response = self.client.verify_mac(
+            KeyId=key_id,
+            Message=plaintext.encode("utf-8"),
+            MacAlgorithm=algorithm,
+            Mac=decoded_hmac,
+        )
+
+        return response["MacValid"]
