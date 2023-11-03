@@ -1,5 +1,3 @@
-from django.core.exceptions import ValidationError
-
 from django_filters import (
     CharFilter,
     DateTimeFilter,
@@ -81,12 +79,7 @@ class ContractNode(DjangoObjectType):
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):
-        try:
-            contract = cls._meta.model.objects.get(pk=id)
-        except cls._meta.model.DoesNotExist:
-            raise ValidationError("Bad Request!")
-
-        return contract
+        return cls._meta.model.objects.filter(pk=id).first()
 
 
 class ContractConnection(graphene.relay.Connection):

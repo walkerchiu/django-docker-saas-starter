@@ -90,12 +90,12 @@ class OrganizationNode(DjangoObjectType):
         try:
             organization = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise ValidationError("Bad Request!")
+            return None
 
         if organization.is_visible:
             return organization
 
-        raise ValidationError("Bad Request!")
+        return None
 
     @staticmethod
     def resolve_translation(root: Organization, info: ResolveInfo):

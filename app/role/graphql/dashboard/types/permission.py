@@ -1,5 +1,3 @@
-from django.core.exceptions import ValidationError
-
 from django_filters import (
     BooleanFilter,
     CharFilter,
@@ -95,12 +93,7 @@ class PermissionNode(DjangoObjectType):
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):
-        try:
-            permission = cls._meta.model.objects.get(pk=id)
-        except cls._meta.model.DoesNotExist:
-            raise ValidationError("Bad Request!")
-
-        return permission
+        return cls._meta.model.objects.filter(pk=id).first()
 
     @staticmethod
     def resolve_translation(root: Permission, info: ResolveInfo):

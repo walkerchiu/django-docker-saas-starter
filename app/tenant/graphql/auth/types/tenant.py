@@ -42,7 +42,7 @@ class TenantNode(DjangoObjectType):
         try:
             tenant = cls._meta.model.objects.get(pk=id)
         except cls._meta.model.DoesNotExist:
-            raise ValidationError("Bad Request!")
+            return None
 
         if (
             info.context.user.is_authenticated
@@ -51,7 +51,7 @@ class TenantNode(DjangoObjectType):
         ):
             return tenant
 
-        raise ValidationError("Bad Request!")
+        return None
 
 
 class TenantConnection(graphene.relay.Connection):

@@ -49,12 +49,7 @@ class UserNode(DjangoObjectType):
     @classmethod
     @login_required
     def get_node(cls, info: ResolveInfo, id):
-        try:
-            user = cls._meta.model.objects.get(pk=id)
-        except cls._meta.model.DoesNotExist:
-            raise ValidationError("Bad Request!")
-
-        return user
+        return cls._meta.model.objects.filter(pk=id).first()
 
 
 class UserConnection(graphene.relay.Connection):

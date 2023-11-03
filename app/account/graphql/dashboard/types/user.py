@@ -1,5 +1,4 @@
 from django.conf import settings
-from django.core.exceptions import ValidationError
 
 from django_tenants.utils import schema_context
 from graphene import ResolveInfo
@@ -53,12 +52,7 @@ class UserNode(DjangoObjectType):
 
     @classmethod
     def get_node(cls, info: ResolveInfo, id):
-        try:
-            user = cls._meta.model.objects.get(pk=id)
-        except cls._meta.model.DoesNotExist:
-            raise ValidationError("Bad Request!")
-
-        raise ValidationError("Bad Request!")
+        return cls._meta.model.objects.filter(pk=id).first()
 
     @staticmethod
     def resolve_profile(root: User, info, **kwargs):
