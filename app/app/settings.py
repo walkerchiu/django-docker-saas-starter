@@ -138,6 +138,7 @@ ALLOWED_HOSTS = env("ALLOWED_HOSTS").split(" ")
 MIDDLEWARE = [
     "core.middleware.DomainCorsMiddleware",
     "corsheaders.middleware.CorsMiddleware",
+    "django_ip_geolocation.middleware.IpGeolocationMiddleware",
     "core.middleware.DepthCheckMiddleware",
     "core.middleware.HealthCheckMiddleware",
     "core.middleware.HeaderHandlerMiddleware",
@@ -185,6 +186,23 @@ DATABASES = {
         "HOST": env("SQL_HOST"),
         "PORT": env("SQL_PORT"),
     }
+}
+
+
+# Django Ip Geolocation
+# https://github.com/rednaks/django-ip-geolocation
+
+IP_GEOLOCATION_SETTINGS = {
+    "BACKEND": "django_ip_geolocation.backends.IPGeolocationAPI",
+    "BACKEND_API_KEY": "",
+    "BACKEND_EXTRA_PARAMS": {},
+    "BACKEND_USERNAME": "",
+    "RESPONSE_HEADER": "X-IP-Geolocation",
+    "ENABLE_REQUEST_HOOK": True,
+    "ENABLE_RESPONSE_HOOK": True,
+    "ENABLE_COOKIE": False,
+    "FORCE_IP_ADDR": None,
+    "USER_CONSENT_VALIDATOR": None,
 }
 
 

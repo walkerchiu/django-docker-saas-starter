@@ -1,13 +1,26 @@
 import re
 
 from django.conf import settings
+from django.http.request import HttpRequest
 
 from graphene_django.views import GraphQLView
 
 
 class ErrorGraphQLView(GraphQLView):
-    def execute_graphql_request(self, *args, **kwargs):
-        result = super().execute_graphql_request(*args, **kwargs)
+    def execute_graphql_request(
+        self,
+        request: HttpRequest,
+        data,
+        query,
+        variables,
+        operation_name,
+        show_graphiql,
+    ):
+        # print(request.geolocation)
+
+        result = super().execute_graphql_request(
+            request, data, query, variables, operation_name, show_graphiql
+        )
 
         if not settings.PLAYGROUND and result.errors:
             for error in result.errors:
