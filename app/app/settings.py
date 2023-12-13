@@ -106,6 +106,7 @@ PUBLIC_SCHEMA_NAME = "public"
 TENANT_APPS = (
     "graphql_jwt.refresh_token.apps.RefreshTokenConfig",
     "account",
+    "log",
     "organization",
     "role",
 )
