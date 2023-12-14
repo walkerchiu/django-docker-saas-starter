@@ -9,13 +9,17 @@ https://docs.djangoproject.com/en/4.2/ref/settings/
 """
 
 from datetime import timedelta
-from pathlib import Path
-from ssm_parameter_store import EC2ParameterStore
-import django
-import environ
 import os
 
+from pathlib import Path
+from sentry_sdk.integrations.django import DjangoIntegration
+from sentry_sdk.integrations.logging import ignore_logger
+from ssm_parameter_store import EC2ParameterStore
+import environ
+import sentry_sdk
+
 from django.utils.encoding import force_str
+import django
 
 from corsheaders.defaults import default_headers
 
@@ -274,6 +278,38 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 
+# Sentry
+# https://docs.sentry.io/platforms/python/guides/django/
+# https://docs.sentry.io/platforms/python/guides/django/configuration/options/
+
+SENTRY_DSN = env("SENTRY_DSN")
+
+sentry_sdk.init(
+    dsn=SENTRY_DSN,
+    integrations=[DjangoIntegration()],
+    # Set traces_sample_rate to 1.0 to capture 100%
+    # of transactions for performance monitoring.
+    # We recommend adjusting this value in production,
+    traces_sample_rate=1.0,
+    # If you wish to associate users to errors (assuming you are using
+    # django.contrib.auth) you may enable sending PII data.
+    send_default_pii=True,
+    # By default the SDK will try to use the SENTRY_RELEASE
+    # environment variable, or infer a git commit
+    # SHA as release, however you may want to set
+    # something more human-readable.
+    # release="myapp@1.0.0",
+    # Sets the environment. This string is freeform and set to production by default.
+    # A release can be associated with more than one environment to separate them in the UI (think staging vs production or similar).
+    # By default the SDK will try to read this value from the SENTRY_ENVIRONMENT environment variable.
+    environment=APP_ENV,
+)
+
+# Ignore this logger because it logs errors as strings instead of actual errors
+# and we lose a lot of Sentry's features. Instead use SentryMiddleware.
+ignore_logger("graphql.execution.utils")
+
+
 # GraphQL
 # https://docs.graphene-python.org/en/latest/quickstart/
 # https://django-graphql-jwt.domake.io/
@@ -287,6 +323,7 @@ GRAPHENE = {
     "GRAPHIQL_HEADER_EDITOR_ENABLED": True,
     "GRAPHIQL_SHOULD_PERSIST_HEADERS": False,
     "MIDDLEWARE": [
+        "core.sentry.middleware.SentryMiddleware",
         "core.graphql_jwt.middleware.JSONWebTokenMiddleware",
         "account.graphql.middleware.LoaderMiddleware",
         "tenant.graphql.middleware.LoaderMiddleware",
