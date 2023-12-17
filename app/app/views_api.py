@@ -1,8 +1,17 @@
-from django.http import JsonResponse
+from django.http import HttpResponse, JsonResponse
+from django.utils.decorators import method_decorator
+from django.views import View
+from django.views.decorators.csrf import ensure_csrf_cookie
 
 from rest_framework import status
 
 import configparser
+
+
+class CSRFView(View):
+    @method_decorator(ensure_csrf_cookie)
+    def get(self, request):
+        return HttpResponse("204", status=204)
 
 
 def version(request):
