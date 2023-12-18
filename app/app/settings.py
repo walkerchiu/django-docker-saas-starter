@@ -275,6 +275,9 @@ CORS_ORIGIN_WHITELIST = CORS_ALLOWED_ORIGINS
 # CSRF
 # https://docs.djangoproject.com/en/4.2/ref/settings/#csrf-trusted-origins
 
+# CSRF_COOKIE_HTTPONLY = True
+# CSRF_COOKIE_SAMESITE = None
+# CSRF_COOKIE_SECURE = True
 CSRF_TRUSTED_ORIGINS = CORS_ALLOWED_ORIGINS
 
 
@@ -341,6 +344,31 @@ GRAPHENE = {
 
 GRAPHENE_MAX_BREADTH = 1
 GRAPHENE_MAX_DEPTH = 18
+
+# GRAPHQL_JWT = {
+#     "JWT_ALGORITHM": "HS256",
+#     "JWT_ALLOW_REFRESH": True,
+#     "JWT_COOKIE_DOMAIN": None,
+#     "JWT_COOKIE_NAME": "JWT",
+#     "JWT_COOKIE_PATH": "/",
+#     "JWT_COOKIE_SAMESITE": None,
+#     "JWT_COOKIE_SECURE": True,
+#     "JWT_CSRF_ROTATION": True,
+#     "JWT_EXPIRATION_DELTA": timedelta(
+#         minutes=int(os.environ["JWT_EXPIRATION_MINUTES"])
+#     ),
+#     "JWT_GET_USER_BY_NATURAL_KEY_HANDLER": "core.graphql_jwt.utils.get_user_by_natural_key",
+#     "JWT_HIDE_TOKEN_FIELDS": True,
+#     "JWT_LONG_RUNNING_REFRESH_TOKEN": True,
+#     "JWT_PAYLOAD_HANDLER": "core.graphql_jwt.utils.jwt_payload",
+#     "JWT_REFRESH_EXPIRATION_DELTA": timedelta(
+#         days=int(os.environ["JWT_REFRESH_EXPIRATION_DAYS"])
+#     ),
+#     "JWT_REFRESH_TOKEN_COOKIE_NAME": "JWT-refresh-token",
+#     "JWT_REUSE_REFRESH_TOKENS": True,
+#     "JWT_SECRET_KEY": SECRET_KEY,
+#     "JWT_VERIFY_EXPIRATION": True,
+# }
 
 GRAPHQL_JWT = {
     "JWT_ALGORITHM": "HS256",

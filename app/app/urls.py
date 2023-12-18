@@ -18,6 +18,8 @@ from django.conf import settings
 from django.conf.urls.static import static
 from django.urls import path
 
+# from graphql_jwt.decorators import jwt_cookie
+
 from app.schemas.schema_auth import schema as schema_auth
 from app.schemas.schema_dashboard import schema as schema_dashboard
 from app.schemas.schema_hq import schema as schema_hq
@@ -30,6 +32,42 @@ from core.views import ErrorGraphQLView
 urlpatterns = [
     path("api/csrf-token", CSRFView.as_view()),
     path("api/version", version, name="version"),
+    # path(
+    #     "auth/graphql",
+    #     jwt_cookie(
+    #         ErrorGraphQLView.as_view(
+    #             graphiql=settings.PLAYGROUND,
+    #             schema=schema_auth,
+    #         ),
+    #     ),
+    # ),
+    # path(
+    #     "dashboard/graphql",
+    #     jwt_cookie(
+    #         ErrorGraphQLView.as_view(
+    #             graphiql=settings.PLAYGROUND,
+    #             schema=schema_dashboard,
+    #         ),
+    #     ),
+    # ),
+    # path(
+    #     "hq/graphql",
+    #     jwt_cookie(
+    #         ErrorGraphQLView.as_view(
+    #             graphiql=settings.PLAYGROUND,
+    #             schema=schema_hq,
+    #         ),
+    #     ),
+    # ),
+    # path(
+    #     "website/graphql",
+    #     jwt_cookie(
+    #         ErrorGraphQLView.as_view(
+    #             graphiql=settings.PLAYGROUND,
+    #             schema=schema_website,
+    #         ),
+    #     ),
+    # ),
     path(
         "auth/graphql",
         ErrorGraphQLView.as_view(
