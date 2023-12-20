@@ -66,3 +66,43 @@ class Domain(DomainMixin, CommonDateAndSafeDeleteMixin):
 
     def __str__(self):
         return str(self.id)
+
+
+class Job(CommonDateAndSafeDeleteMixin, PublishableModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    slug = models.CharField(max_length=255, db_index=True, blank=True, null=True)
+    name = models.CharField(max_length=255, db_index=True, blank=True, null=True)
+    description = models.TextField(blank=True, null=True)
+    schema_name = models.CharField(max_length=32, blank=True, null=True)
+    month = models.CharField(max_length=2, blank=True, null=True)
+    weekday = models.CharField(max_length=1, blank=True, null=True)
+    time = models.CharField(max_length=5, blank=True, null=True)
+    sort_key = models.IntegerField(db_index=True, null=True)
+
+    class Meta:
+        db_table = settings.APP_NAME + "_job"
+        get_latest_by = "updated_at"
+        ordering = ["sort_key"]
+
+    def __str__(self):
+        return str(self.id)
+
+
+class Task(CommonDateAndSafeDeleteMixin, PublishableModel):
+    id = models.UUIDField(primary_key=True, default=uuid.uuid4, editable=False)
+    task = models.ForeignKey(
+        Job,
+        db_index=True,
+        related_name="tasks",
+        on_delete=models.CASCADE,
+    )
+    sort_key = models.IntegerField(db_index=True, null=True)
+    is_locked = models.BooleanField(default=False)
+
+    class Meta:
+        db_table = settings.APP_NAME + "_task"
+        get_latest_by = "updated_at"
+        ordering = ["sort_key"]
+
+    def __str__(self):
+        return str(self.id)
